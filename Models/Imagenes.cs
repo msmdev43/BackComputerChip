@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace computerChip.Models
 {
-    internal class Imagenes
+    public class Imagenes
     {
     }
 }
