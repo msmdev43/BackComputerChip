@@ -50,7 +50,7 @@ namespace computerChip.Data
             // ============================================================
 
             // ---------- USUARIO ----------
-            modelBuilder.Entity<Usuario>(entity =>
+            modelBuilder.Entity<Usuarios>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id)
@@ -180,14 +180,14 @@ namespace computerChip.Data
                     .IsRequired(false);
 
                 // Relación con Usuario
-                entity.HasOne(e => e.Usuario)
+                entity.HasOne(e => e.Usuarios)
                     .WithMany(u => u.LoginGoogle)
                     .HasForeignKey(e => e.UsuarioId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
             // ---------- PRODUCTO ----------
-            modelBuilder.Entity<Producto>(entity =>
+            modelBuilder.Entity<Productos>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id)
@@ -289,7 +289,7 @@ namespace computerChip.Data
             });
 
             // ---------- CATEGORIA ----------
-            modelBuilder.Entity<Categoria>(entity =>
+            modelBuilder.Entity<Categorias>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id)
@@ -316,7 +316,7 @@ namespace computerChip.Data
             });
 
             // ---------- MARCA ----------
-            modelBuilder.Entity<Marca>(entity =>
+            modelBuilder.Entity<Marcas>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id)
@@ -371,7 +371,7 @@ namespace computerChip.Data
             });
 
             // ---------- CARRITO PRODUCTO ----------
-            modelBuilder.Entity<CarritoProducto>(entity =>
+            modelBuilder.Entity<CarritoProductos>(entity =>
             {
                 entity.HasKey(e => new { e.CarritoId, e.ProductoId });
 
@@ -399,14 +399,14 @@ namespace computerChip.Data
                     .HasForeignKey(e => e.CarritoId)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasOne(e => e.Producto)
+                entity.HasOne(e => e.Productos)
                     .WithMany(p => p.Carritos)
                     .HasForeignKey(e => e.ProductoId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
             // ---------- PEDIDO ----------
-            modelBuilder.Entity<Pedido>(entity =>
+            modelBuilder.Entity<Pedidos>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id)
@@ -431,7 +431,7 @@ namespace computerChip.Data
                     .ValueGeneratedOnAddOrUpdate();
 
                 // Relaciones
-                entity.HasOne(e => e.Usuario)
+                entity.HasOne(e => e.Usuarios)
                     .WithMany(u => u.Pedidos)
                     .HasForeignKey(e => e.UsuarioId)
                     .OnDelete(DeleteBehavior.Restrict);
@@ -446,7 +446,7 @@ namespace computerChip.Data
                     .HasForeignKey(e => e.ZonaEnvioId)
                     .OnDelete(DeleteBehavior.Restrict);
 
-                entity.HasOne(e => e.Oferta)
+                entity.HasOne(e => e.Ofertas)
                     .WithMany(o => o.Pedidos)
                     .HasForeignKey(e => e.OfertaId)
                     .OnDelete(DeleteBehavior.SetNull)
@@ -470,12 +470,12 @@ namespace computerChip.Data
                     .IsRequired();
 
                 // Relaciones
-                entity.HasOne(e => e.Pedido)
+                entity.HasOne(e => e.Pedidos)
                     .WithMany(p => p.Items)
                     .HasForeignKey(e => e.PedidoId)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasOne(e => e.Producto)
+                entity.HasOne(e => e.Productos)
                     .WithMany(p => p.ItemsPedido)
                     .HasForeignKey(e => e.ProductoId)
                     .OnDelete(DeleteBehavior.Restrict);
@@ -538,7 +538,7 @@ namespace computerChip.Data
             });
 
             // ---------- OFERTA ----------
-            modelBuilder.Entity<Oferta>(entity =>
+            modelBuilder.Entity<Ofertas>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id)
@@ -592,7 +592,7 @@ namespace computerChip.Data
             });
 
             // ---------- IMAGEN ----------
-            modelBuilder.Entity<Imagen>(entity =>
+            modelBuilder.Entity<Imagenes>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id)
@@ -623,7 +623,7 @@ namespace computerChip.Data
             });
 
             // ---------- ESPECIFICACION ----------
-            modelBuilder.Entity<Especificacion>(entity =>
+            modelBuilder.Entity<Especificaciones>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id)
@@ -641,7 +641,7 @@ namespace computerChip.Data
             });
 
             // ---------- PREGUNTA ----------
-            modelBuilder.Entity<Pregunta>(entity =>
+            modelBuilder.Entity<Preguntas>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id)
@@ -658,7 +658,7 @@ namespace computerChip.Data
             });
 
             // ---------- ATRIBUTO ----------
-            modelBuilder.Entity<Atributo>(entity =>
+            modelBuilder.Entity<Atributos>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id)
@@ -672,7 +672,7 @@ namespace computerChip.Data
             });
 
             // ---------- PRODUCTO ATRIBUTO ----------
-            modelBuilder.Entity<ProductoAtributo>(entity =>
+            modelBuilder.Entity<ProductoAtributos>(entity =>
             {
                 entity.HasKey(e => new { e.ProductoId, e.AtributoId });
 
@@ -681,12 +681,12 @@ namespace computerChip.Data
                     .HasMaxLength(65)
                     .IsRequired();
 
-                entity.HasOne(e => e.Producto)
+                entity.HasOne(e => e.Productos)
                     .WithMany()
                     .HasForeignKey(e => e.ProductoId)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasOne(e => e.Atributo)
+                entity.HasOne(e => e.Atributos)
                     .WithMany()
                     .HasForeignKey(e => e.AtributoId)
                     .OnDelete(DeleteBehavior.Cascade);
@@ -732,12 +732,12 @@ namespace computerChip.Data
                     .HasColumnType("int")
                     .UseMySqlIdentityColumn();
 
-                entity.Property(e => e.Usuario)
+                entity.Property(e => e.Usuarios)
                     .HasColumnType("varchar(65)")
                     .HasMaxLength(65)
                     .IsRequired();
 
-                entity.HasIndex(e => e.Usuario)
+                entity.HasIndex(e => e.Usuarios)
                     .IsUnique()
                     .HasDatabaseName("IX_Admin_Usuario");
 
@@ -778,7 +778,7 @@ namespace computerChip.Data
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired(false);
 
-                entity.HasOne(e => e.Usuario)
+                entity.HasOne(e => e.Usuarios)
                     .WithMany(u => u.PushTokens)
                     .HasForeignKey(e => e.UsuarioId)
                     .OnDelete(DeleteBehavior.Cascade)
@@ -819,7 +819,7 @@ namespace computerChip.Data
                     .HasDefaultValueSql("CURRENT_TIMESTAMP")
                     .ValueGeneratedOnAddOrUpdate();
 
-                entity.HasOne(e => e.Usuario)
+                entity.HasOne(e => e.Usuarios)
                     .WithMany(u => u.SantanderTokens)
                     .HasForeignKey(e => e.UsuarioId)
                     .OnDelete(DeleteBehavior.Cascade);
