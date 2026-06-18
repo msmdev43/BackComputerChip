@@ -15,9 +15,9 @@ namespace computerChip.Models.TablasIntermedias
         // RELACIONES
         // ============================================
         [ForeignKey(nameof(itemPedidoId))]
-        public virtual ItemPedido itemPedido { get; set; } = null!;
+        public virtual ItemPedido ItemPedido { get; set; } = null!;
 
         [ForeignKey(nameof(productoId))]
-        public virtual Productos producto { get; set; } = null!;
+        public virtual Productos Productos { get; set; } = null!;
     }
 }

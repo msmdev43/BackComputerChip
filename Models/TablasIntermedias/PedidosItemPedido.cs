@@ -6,7 +6,7 @@ namespace computerChip.Models.TablasIntermedias
     public class PedidosItemPedido
     {
         [Column("pedidos_idpedidos")]
-        public int pedidoId { get; set; }
+        public int pedidosId { get; set; }
 
         [Column("item_pedido_iditem_pedido")]
         public int itemPedidoId { get; set; }
@@ -14,10 +14,10 @@ namespace computerChip.Models.TablasIntermedias
         // ============================================
         // RELACIONES
         // ============================================
-        [ForeignKey(nameof(pedidoId))]
-        public virtual Pedidos pedido { get; set; } = null!;
+        [ForeignKey(nameof(pedidosId))]
+        public virtual Pedidos Pedidos { get; set; } = null!;
 
         [ForeignKey(nameof(itemPedidoId))]
-        public virtual ItemPedido itemPedido { get; set; } = null!;
+        public virtual ItemPedido ItemPedido { get; set; } = null!;
     }
 }

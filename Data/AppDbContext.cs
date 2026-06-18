@@ -138,30 +138,30 @@ namespace computerChip.Data
                     .IsRequired(false);
 
                 // RELACIONES
-                //entity.HasMany(e => e.loginGoogle)
-                //    .WithOne(e => e.usuario)
-                //    .HasForeignKey(e => e.usuarioId)
-                //    .OnDelete(DeleteBehavior.Cascade);
+                entity.HasMany(e => e.LoginGoogle)
+                    .WithOne(e => e.Usuarios)
+                    .HasForeignKey(e => e.usuarioId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
-                //entity.HasMany(e => e.carritos)
-                //    .WithOne(e => e.usuario)
-                //    .HasForeignKey(e => e.usuarioId)
-                //    .OnDelete(DeleteBehavior.Cascade);
+                entity.HasMany(e => e.Carrito)
+                    .WithOne(e => e.Usuarios)
+                    .HasForeignKey(e => e.usuarioId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
-                //entity.HasMany(e => e.pedidos)
-                //    .WithOne(e => e.usuario)
-                //    .HasForeignKey(e => e.usuarioId)
-                //    .OnDelete(DeleteBehavior.Restrict);
+                entity.HasMany(e => e.Pedidos)
+                    .WithOne(e => e.Usuarios)
+                    .HasForeignKey(e => e.UsuarioId)
+                    .OnDelete(DeleteBehavior.Restrict);
 
-                //entity.HasMany(e => e.pushTokens)
-                //    .WithOne(e => e.usuario)
-                //    .HasForeignKey(e => e.usuarioId)
-                //    .OnDelete(DeleteBehavior.Cascade);
+                entity.HasMany(e => e.PushTokens)
+                    .WithOne(e => e.Usuarios)
+                    .HasForeignKey(e => e.usuarioId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
-                //entity.HasMany(e => e.santanderTokens)
-                //    .WithOne(e => e.usuario)
-                //    .HasForeignKey(e => e.usuarioId)
-                //    .OnDelete(DeleteBehavior.Cascade);
+                entity.HasMany(e => e.SantanderTokens)
+                    .WithOne(e => e.Usuarios)
+                    .HasForeignKey(e => e.usuarioId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             // ---------- LOGIN GOOGLE ----------
@@ -274,49 +274,49 @@ namespace computerChip.Data
                     .IsRequired(false);
 
                 // RELACIONES Many-to-Many con tablas intermedias
-                entity.HasMany(e => e.categoriasProductos)
-                    .WithOne(e => e.producto)
+                entity.HasMany(e => e.CategoriasProductos)
+                    .WithOne(e => e.Productos)
                     .HasForeignKey(e => e.productoId)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasMany(e => e.marcasProductos)
-                    .WithOne(e => e.producto)
+                entity.HasMany(e => e.ProductosMarcas)
+                    .WithOne(e => e.Productos)
                     .HasForeignKey(e => e.productoId)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasMany(e => e.productosImagenes)
-                    .WithOne(e => e.producto)
+                entity.HasMany(e => e.ProductosImagenes)
+                    .WithOne(e => e.Productos)
                     .HasForeignKey(e => e.productoId)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasMany(e => e.productosOfertas)
-                    .WithOne(e => e.producto)
+                entity.HasMany(e => e.ProductosOfertas)
+                    .WithOne(e => e.Productos)
                     .HasForeignKey(e => e.productoId)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasMany(e => e.productosPreguntas)
-                    .WithOne(e => e.producto)
+                entity.HasMany(e => e.ProductosPreguntas)
+                    .WithOne(e => e.Productos)
                     .HasForeignKey(e => e.productoId)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasMany(e => e.productosEspecificaciones)
-                    .WithOne(e => e.producto)
+                entity.HasMany(e => e.ProductosEspecificaciones)
+                    .WithOne(e => e.Productos)
                     .HasForeignKey(e => e.productoId)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasMany(e => e.productoAtributos)
-                    .WithOne(e => e.producto)
+                entity.HasMany(e => e.ProductoAtributos)
+                    .WithOne(e => e.Productos)
                     .HasForeignKey(e => e.productoId)
                     .OnDelete(DeleteBehavior.Cascade);
 
                 // Relaciones One-to-Many
-                entity.HasMany(e => e.carritos)
-                    .WithOne(e => e.producto)
+                entity.HasMany(e => e.CarritoProductos)
+                    .WithOne(e => e.Productos)
                     .HasForeignKey(e => e.productoId)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasMany(e => e.itemsPedido)
-                    .WithOne(e => e.producto)
+                entity.HasMany(e => e.ItemsPedidoProductos)
+                    .WithOne(e => e.Productos)
                     .HasForeignKey(e => e.productoId)
                     .OnDelete(DeleteBehavior.Restrict);
             });
@@ -465,9 +465,9 @@ namespace computerChip.Data
                     .ValueGeneratedOnAddOrUpdate();
 
                 // RELACIONES
-                entity.HasMany(e => e.pedidosItemPedido)
-                    .WithOne(e => e.pedido)
-                    .HasForeignKey(e => e.pedidoId)
+                entity.HasMany(e => e.PedidosItemPedido)
+                    .WithOne(e => e.Pedidos)
+                    .HasForeignKey(e => e.pedidosId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
@@ -489,12 +489,12 @@ namespace computerChip.Data
 
                 // RELACIONES
                 entity.HasMany(e => e.PedidosItemPedido)
-                    .WithOne(e => e.itemPedido)
+                    .WithOne(e => e.ItemPedido)
                     .HasForeignKey(e => e.itemPedidoId)
                     .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasMany(e => e.ItemPedidoProductos)
-                    .WithOne(e => e.itemPedido)
+                    .WithOne(e => e.ItemPedido)
                     .HasForeignKey(e => e.itemPedidoId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
@@ -523,7 +523,7 @@ namespace computerChip.Data
                 // RELACIONES
                 entity.HasMany(e => e.Pedidos)
                     .WithOne(e => e.MetodoPago)
-                    .HasForeignKey(e => e.metodoPagoId)
+                    .HasForeignKey(e => e.MetodoPagoId)
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
@@ -563,7 +563,7 @@ namespace computerChip.Data
                 // RELACIONES
                 entity.HasMany(e => e.Pedidos)
                     .WithOne(e => e.ZonaEnvio)
-                    .HasForeignKey(e => e.zonaEnvioId)
+                    .HasForeignKey(e => e.ZonaEnvioId)
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
@@ -621,14 +621,14 @@ namespace computerChip.Data
                     .IsRequired(false);
 
                 // RELACIONES
-                entity.HasMany(e => e.productosOfertas)
-                    .WithOne(e => e.oferta)
+                entity.HasMany(e => e.ProductosOfertas)
+                    .WithOne(e => e.Ofertas)
                     .HasForeignKey(e => e.ofertaId)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasMany(e => e.pedidos)
-                    .WithOne(e => e.oferta)
-                    .HasForeignKey(e => e.ofertaId)
+                entity.HasMany(e => e.Pedidos)
+                    .WithOne(e => e.Ofertas)
+                    .HasForeignKey(e => e.OfertaId)
                     .OnDelete(DeleteBehavior.SetNull);
             });
 
@@ -664,7 +664,7 @@ namespace computerChip.Data
 
                 // RELACIONES
                 entity.HasMany(e => e.ProductosImagenes)
-                    .WithOne(e => e.imagen)
+                    .WithOne(e => e.Imagenes)
                     .HasForeignKey(e => e.imagenId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
@@ -688,7 +688,7 @@ namespace computerChip.Data
 
                 // RELACIONES
                 entity.HasMany(e => e.ProductosEspecificaciones)
-                    .WithOne(e => e.especificacion)
+                    .WithOne(e => e.Especificaciones)
                     .HasForeignKey(e => e.especificacionId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
@@ -711,7 +711,7 @@ namespace computerChip.Data
 
                 // RELACIONES
                 entity.HasMany(e => e.ProductosPreguntas)
-                    .WithOne(e => e.pregunta)
+                    .WithOne(e => e.Preguntas)
                     .HasForeignKey(e => e.preguntaId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
@@ -914,13 +914,13 @@ namespace computerChip.Data
                     .HasColumnType("int")
                     .IsRequired();
 
-                entity.HasOne(e => e.producto)
-                    .WithMany(e => e.productosImagenes)
+                entity.HasOne(e => e.Productos)
+                    .WithMany(e => e.ProductosImagenes)
                     .HasForeignKey(e => e.productoId)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasOne(e => e.imagen)
-                    .WithMany(e => e.productosImagenes)
+                entity.HasOne(e => e.Imagenes)
+                    .WithMany(e => e.ProductosImagenes)
                     .HasForeignKey(e => e.imagenId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
@@ -930,13 +930,13 @@ namespace computerChip.Data
             {
                 entity.HasKey(e => new { e.productoId, e.ofertaId });
 
-                entity.HasOne(e => e.producto)
-                    .WithMany(e => e.productosOfertas)
+                entity.HasOne(e => e.Productos)
+                    .WithMany(e => e.ProductosOfertas)
                     .HasForeignKey(e => e.productoId)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasOne(e => e.oferta)
-                    .WithMany(e => e.productosOfertas)
+                entity.HasOne(e => e.Ofertas)
+                    .WithMany(e => e.ProductosOfertas)
                     .HasForeignKey(e => e.ofertaId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
@@ -946,13 +946,13 @@ namespace computerChip.Data
             {
                 entity.HasKey(e => new { e.productoId, e.preguntaId });
 
-                entity.HasOne(e => e.producto)
-                    .WithMany(e => e.productosPreguntas)
+                entity.HasOne(e => e.Productos)
+                    .WithMany(e => e.ProductosPreguntas)
                     .HasForeignKey(e => e.productoId)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasOne(e => e.pregunta)
-                    .WithMany(e => e.productosPreguntas)
+                entity.HasOne(e => e.Preguntas)
+                    .WithMany(e => e.ProductosPreguntas)
                     .HasForeignKey(e => e.preguntaId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
@@ -962,13 +962,13 @@ namespace computerChip.Data
             {
                 entity.HasKey(e => new { e.productoId, e.especificacionId });
 
-                entity.HasOne(e => e.producto)
-                    .WithMany(e => e.productosEspecificaciones)
+                entity.HasOne(e => e.Productos)
+                    .WithMany(e => e.ProductosEspecificaciones)
                     .HasForeignKey(e => e.productoId)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasOne(e => e.especificacion)
-                    .WithMany(e => e.productosEspecificaciones)
+                entity.HasOne(e => e.Especificaciones)
+                    .WithMany(e => e.ProductosEspecificaciones)
                     .HasForeignKey(e => e.especificacionId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
@@ -976,15 +976,15 @@ namespace computerChip.Data
             // ---------- PEDIDOS ITEM PEDIDO ----------
             modelBuilder.Entity<PedidosItemPedido>(entity =>
             {
-                entity.HasKey(e => new { e.pedidoId, e.itemPedidoId });
+                entity.HasKey(e => new { e.pedidosId, e.itemPedidoId });
 
-                entity.HasOne(e => e.pedido)
-                    .WithMany(e => e.pedidosItemPedido)
-                    .HasForeignKey(e => e.pedidoId)
+                entity.HasOne(e => e.Pedidos)
+                    .WithMany(e => e.PedidosItemPedido)
+                    .HasForeignKey(e => e.pedidosId)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasOne(e => e.itemPedido)
-                    .WithMany(e => e.pedidosItemPedido)
+                entity.HasOne(e => e.ItemPedido)
+                    .WithMany(e => e.PedidosItemPedido)
                     .HasForeignKey(e => e.itemPedidoId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
@@ -994,13 +994,13 @@ namespace computerChip.Data
             {
                 entity.HasKey(e => new { e.itemPedidoId, e.productoId });
 
-                entity.HasOne(e => e.itemPedido)
-                    .WithMany(e => e.itemPedidoProductos)
+                entity.HasOne(e => e.ItemPedido)
+                    .WithMany(e => e.ItemPedidoProductos)
                     .HasForeignKey(e => e.itemPedidoId)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasOne(e => e.producto)
-                    .WithMany(e => e.itemsPedido)
+                entity.HasOne(e => e.Productos)
+                    .WithMany(e => e.ItemsPedidoProductos)
                     .HasForeignKey(e => e.productoId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
