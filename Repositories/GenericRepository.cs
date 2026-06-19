@@ -8,7 +8,7 @@ using computerChip.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace computerChip.Repositories.Implementations
+namespace computerChip.Repositories
 {
     public class GenericRepository<T> : IRepository<T> where T : class
     {
