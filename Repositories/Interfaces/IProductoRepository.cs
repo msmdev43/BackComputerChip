@@ -1,4 +1,6 @@
-﻿using computerChip.Models;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using computerChip.Models;
 
 namespace computerChip.Repositories.Interfaces
 {
@@ -7,16 +9,19 @@ namespace computerChip.Repositories.Interfaces
         Task<IEnumerable<Productos>> GetByCategoriaAsync(int categoriaId);
         Task<IEnumerable<Productos>> GetByMarcaAsync(int marcaId);
         Task<IEnumerable<Productos>> GetByPrecioRangeAsync(decimal min, decimal max);
-        Task<IEnumerable<Productos>> GetInStockAsync();
         Task<IEnumerable<Productos>> GetOnSaleAsync();
         Task<IEnumerable<Productos>> GetNewProductsAsync(int days);
         Task<IEnumerable<Productos>> SearchProductsAsync(string searchTerm);
-        Task<IEnumerable<Productos>> GetWithFullDetailsAsync();
-        Task<Productos> GetWithFullDetailsByIdAsync(int id);
-        Task<bool> HasStockAsync(int id, int cantidad);
-        Task<bool> UpdateStockAsync(int id, int cantidad);
-        Task<IEnumerable<Productos>> GetTopSellingAsync(int top);
+        Task<IEnumerable<Productos>> GetAllWithFullDetailsAsync();
+        Task<Productos?> GetWithFullDetailsByIdAsync(int id);
+        Task<Productos?> GetWithCategoriasMarcasAsync(int id);
+        //Task<IEnumerable<Productos>> GetTopSellingAsync(int top);
         Task<IEnumerable<Productos>> GetRelatedProductsAsync(int productId);
         Task<decimal> GetAveragePriceAsync();
+        Task<decimal> GetMinPriceAsync();
+        Task<decimal> GetMaxPriceAsync();
+        Task<int> GetTotalProductsAsync();
+        Task<bool> SoftDeleteAsync(int id);
+        Task<bool> RestoreAsync(int id);
     }
 }

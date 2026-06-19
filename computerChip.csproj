@@ -25,6 +25,7 @@
   <ItemGroup>
     <Folder Include="Common\" />
     <Folder Include="Services\Interfaces\" />
+    <Folder Include="Services\Implementations\" />
   </ItemGroup>
 
 </Project>

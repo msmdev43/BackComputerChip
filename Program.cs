@@ -1,8 +1,8 @@
 using computerChip.Repositories.Interfaces;
-using computerChip.Repositories;
 using computerChip.Data;
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using computerChip.Repositories.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
