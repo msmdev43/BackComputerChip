@@ -1,4 +1,5 @@
-﻿using computerChip.Models.TablasIntermedias;
+﻿using computerChip.Models.Enum;
+using computerChip.Models.TablasIntermedias;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -29,7 +30,7 @@ namespace computerChip.Models
         public int? OfertaId { get; set; }
 
         [Column("estado")]
-        public string estado { get; set; } = "pendiente";
+        public EstadoPedido estado { get; set; } = EstadoPedido.PENDIENTE; //estado es un ENUM con pendiente como por default (PENDIENTE, CONFIRMADO, ENVIADO, ENTREGADO, CANCELADO)
 
         [Column("total")]
         public decimal total { get; set; }

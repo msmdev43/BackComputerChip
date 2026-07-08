@@ -27,7 +27,7 @@ namespace computerChip.Models
         public string garantia { get; set; } = string.Empty;
 
         [Column("stock")]
-        public Boolean stock { get; set; }
+        public bool stock { get; set; }
 
         [Column("envioGratis")]
         public int envioGratis { get; set; }
