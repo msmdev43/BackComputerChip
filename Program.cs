@@ -1,17 +1,92 @@
+﻿using computerChip.Data;
+using computerChip.Repositories.Implementations;
 using computerChip.Repositories.Interfaces;
-using computerChip.Data;
+using computerChip.Services;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
-using computerChip.Repositories.Implementations;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddControllers();
+
+// 🔥 AGREGAR ESTO: Configuración de Logging
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.ClearProviders();
+    loggingBuilder.AddConsole();
+    loggingBuilder.AddDebug();
+    loggingBuilder.SetMinimumLevel(LogLevel.Debug);
+});
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor |
+        ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var secretKey = jwtSettings["SecretKey"];
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSettings["Issuer"],
+            ValidAudience = jwtSettings["Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]))
+        };
+    });
+
+builder.Services.AddAuthorization();
+
+// ===============================
+// CORS 🔥
+// ===============================
+
+var origenes = builder.Configuration.GetSection("origenesPermitidos").Get<string[]>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontendPolicy", policy =>
+    {
+        policy.WithOrigins(origenes)
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
+// Configurar DbContext con MySQL
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        new MySqlServerVersion(new Version(8, 0, 43))
+    ));
 
 // ============================================
 // INICIO REPOSITORIOS EN EL PROGRAM
 // ============================================
+
 builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
 
-// Repositorios espec�ficos
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<ILoginGoogleRepository, LoginGoogleRepository>();
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
@@ -31,21 +106,50 @@ builder.Services.AddScoped<IOfertaRepository, OfertaRepository>();
 // FIN REPOSITORIOS EN EL PROGRAM
 // ============================================
 
-builder.Services.AddControllers();
+// ============================================
+// INICIO SERVICIOS EN EL PROGRAM
+// ============================================
+builder.Services.AddScoped<JwtService>();
+
+// ============================================
+// FIN SERVICIOS EN EL PROGRAM
+// ============================================
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+if (app.Environment.WebRootPath == null)
+{
+    app.Environment.WebRootPath =
+        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+}
+
+// 🔥 Forwarded headers ANTES de todo
+app.UseForwardedHeaders();
+
+// Swagger solo en dev
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseStaticFiles();
+
+// 🔥 ORDEN CORRECTO
+app.UseRouting();
+
+app.UseCors("FrontendPolicy");
+
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
+
+// 🔥 Escuchar solo interno (nginx expone el 80)
+app.Urls.Clear();
+app.Urls.Add("http://0.0.0.0:5173");
 
 app.Run();
