@@ -54,6 +54,42 @@ namespace computerChip.Repositories.Implementations
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Productos>> GetInStockAsync()
+        {
+            return await _context.Productos
+                .Where(p => p.stock && p.deletedAt == null)
+                .OrderBy(p => p.nombre)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Productos>> GetOutOfStockAsync()
+        {
+            return await _context.Productos
+                .Where(p => !p.stock && p.deletedAt == null)
+                .OrderBy(p => p.nombre)
+                .ToListAsync();
+        }
+
+        public async Task<bool> UpdateStockAsync(int productoId, bool stock)
+        {
+            try
+            {
+                var producto = await _context.Productos.FindAsync(productoId);
+
+                if (producto == null || producto.deletedAt != null)
+                    return false;
+
+                producto.stock = stock;
+                producto.updatedAt = DateTime.Now;
+
+                return await SaveChangesAsync();
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public async Task<IEnumerable<Productos>> GetNewProductsAsync(int days)
         {
             var since = DateTime.Now.AddDays(-days);

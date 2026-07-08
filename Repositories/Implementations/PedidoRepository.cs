@@ -3,6 +3,7 @@ using computerChip.Models;
 using computerChip.Models.TablasIntermedias;
 using computerChip.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using computerChip.Models.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +37,7 @@ namespace computerChip.Repositories.Implementations
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Pedidos>> GetByEstadoAsync(string estado)
+        public async Task<IEnumerable<Pedidos>> GetByEstadoAsync(EstadoPedido estado)
         {
             return await _context.Pedidos
                 .Include(p => p.Usuarios)
@@ -63,7 +64,7 @@ namespace computerChip.Repositories.Implementations
 
         public async Task<IEnumerable<Pedidos>> GetPendingPedidosAsync()
         {
-            return await GetByEstadoAsync("pendiente");
+            return await GetByEstadoAsync(EstadoPedido.PENDIENTE);
         }
 
         public async Task<IEnumerable<Pedidos>> GetRecentPedidosAsync(int days)
@@ -79,24 +80,27 @@ namespace computerChip.Repositories.Implementations
         public async Task<decimal> GetTotalVentasAsync()
         {
             return await _context.Pedidos
-                .Where(p => p.estado != "cancelado")
+                .Where(p => p.estado != EstadoPedido.CANCELADO)
                 .SumAsync(p => p.total);
         }
 
         public async Task<decimal> GetTotalVentasByPeriodoAsync(DateTime desde, DateTime hasta)
         {
             return await _context.Pedidos
-                .Where(p => p.createdAt >= desde && p.createdAt <= hasta && p.estado != "cancelado")
+                .Where(p =>
+                    p.createdAt >= desde &&
+                    p.createdAt <= hasta &&
+                    p.estado != EstadoPedido.CANCELADO)
                 .SumAsync(p => p.total);
         }
 
-        public async Task<int> GetPedidosCountByEstadoAsync(string estado)
+        public async Task<int> GetPedidosCountByEstadoAsync(EstadoPedido estado)
         {
             return await _context.Pedidos
                 .CountAsync(p => p.estado == estado);
         }
 
-        public async Task<bool> UpdateEstadoAsync(int pedidoId, string nuevoEstado)
+        public async Task<bool> UpdateEstadoAsync(int pedidoId, EstadoPedido nuevoEstado)
         {
             try
             {
@@ -142,7 +146,7 @@ namespace computerChip.Repositories.Implementations
                     UsuarioId = carrito.usuarioId,
                     MetodoPagoId = 1,
                     ZonaEnvioId = 1,
-                    estado = "pendiente",
+                    estado = EstadoPedido.PENDIENTE,
                     total = total,
                     createdAt = DateTime.Now,
                     updatedAt = DateTime.Now,
@@ -188,31 +192,31 @@ namespace computerChip.Repositories.Implementations
         public async Task<decimal> GetPromedioVentaAsync()
         {
             return await _context.Pedidos
-                .Where(p => p.estado != "cancelado")
+                .Where(p => p.estado != EstadoPedido.CANCELADO)
                 .AverageAsync(p => p.total);
         }
 
         public async Task<decimal> GetMaxVentaAsync()
         {
             return await _context.Pedidos
-                .Where(p => p.estado != "cancelado")
+                .Where(p => p.estado != EstadoPedido.CANCELADO)
                 .MaxAsync(p => p.total);
         }
 
         public async Task<int> GetTotalPedidosAsync()
         {
             return await _context.Pedidos
-                .CountAsync(p => p.estado != "cancelado");
+                .CountAsync(p => p.estado != EstadoPedido.CANCELADO);
         }
 
         public async Task<bool> CancelPedidoAsync(int pedidoId)
         {
-            return await UpdateEstadoAsync(pedidoId, "cancelado");
+            return await UpdateEstadoAsync(pedidoId, EstadoPedido.CANCELADO);
         }
 
         public async Task<bool> ConfirmPedidoAsync(int pedidoId)
         {
-            return await UpdateEstadoAsync(pedidoId, "confirmado");
+            return await UpdateEstadoAsync(pedidoId, EstadoPedido.CONFIRMADO);
         }
     }
 }

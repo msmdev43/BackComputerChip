@@ -1,4 +1,5 @@
 ﻿using computerChip.Models;
+using computerChip.Models.Enum;
 using computerChip.Models.TablasIntermedias;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -448,8 +449,9 @@ namespace computerChip.Data
                     .UseMySqlIdentityColumn();
 
                 entity.Property(e => e.estado)
-                    .HasColumnType("enum('pendiente','confirmado','enviado','entregado','cancelado')")
-                    .HasDefaultValue("pendiente");
+                    .HasConversion<string>()
+                    .HasColumnType("enum('PENDIENTE','CONFIRMADO','ENVIADO','ENTREGADO','CANCELADO')")
+                    .HasDefaultValue(EstadoPedido.PENDIENTE);
 
                 entity.Property(e => e.total)
                     .HasColumnType("decimal(10,2)")
