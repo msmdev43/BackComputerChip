@@ -24,7 +24,7 @@ namespace computerChip.Models
         public string email { get; set; } = string.Empty;
 
         [Column("email_verificado")]
-        public int? emailVerificado { get; set; }
+        public bool? emailVerificado { get; set; }
 
         [Column("nombre")]
         [MaxLength(150)]

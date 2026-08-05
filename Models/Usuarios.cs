@@ -43,7 +43,7 @@ namespace computerChip.Models
         public string? celular { get; set; }
 
         [Column("email_verify")]
-        public int? emailVerify { get; set; }
+        public bool? emailVerify { get; set; }
 
         [Column("createdAt")]
         public DateTime createdAt { get; set; }

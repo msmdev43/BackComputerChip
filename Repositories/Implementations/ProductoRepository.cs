@@ -90,6 +90,12 @@ namespace computerChip.Repositories.Implementations
             }
         }
 
+        public async Task<bool> HasStockAsync(int productoId)
+        {
+            var producto = await _context.Productos.FindAsync(productoId);
+            return producto != null && producto.stock && producto.deletedAt == null;
+        }
+
         public async Task<IEnumerable<Productos>> GetNewProductsAsync(int days)
         {
             var since = DateTime.Now.AddDays(-days);

@@ -2,15 +2,17 @@
 using computerChip.Repositories.Implementations;
 using computerChip.Repositories.Interfaces;
 using computerChip.Services;
+using computerChip.Services.Implementations;
+using computerChip.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.EntityFrameworkCore;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -87,6 +89,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
 
+builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<ILoginGoogleRepository, LoginGoogleRepository>();
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
@@ -110,6 +113,24 @@ builder.Services.AddScoped<IOfertaRepository, OfertaRepository>();
 // INICIO SERVICIOS EN EL PROGRAM
 // ============================================
 builder.Services.AddScoped<JwtService>();
+
+builder.Services.AddScoped<IAdminService, AdminService>();
+
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+builder.Services.AddScoped<ILoginGoogleService, LoginGoogleService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IPushTokenService, PushTokenService>();
+
+builder.Services.AddScoped<IProductoService, ProductoService>();
+builder.Services.AddScoped<ICategoriaService, CategoriaService>();
+builder.Services.AddScoped<IMarcaService, MarcaService>();
+builder.Services.AddScoped<IEspecificacionesService, EspecificacionesService>();
+
+builder.Services.AddScoped<ICarritoService, CarritoService>();
+builder.Services.AddScoped<IItemPedidoService, ItemPedidoService>();
+builder.Services.AddScoped<IPedidoService, PedidoService>();
+builder.Services.AddScoped<IZonaEnvioService, ZonaEnvioService>();
+builder.Services.AddScoped<IOfertaService, OfertaService>();
 
 // ============================================
 // FIN SERVICIOS EN EL PROGRAM

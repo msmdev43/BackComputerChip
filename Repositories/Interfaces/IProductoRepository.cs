@@ -14,6 +14,7 @@ namespace computerChip.Repositories.Interfaces
         Task<IEnumerable<Productos>> GetInStockAsync();
         Task<IEnumerable<Productos>> GetOutOfStockAsync();
         Task<bool> UpdateStockAsync(int productoId, bool stock);
+        Task<bool> HasStockAsync(int productoId);
 
         Task<IEnumerable<Productos>> GetNewProductsAsync(int days);
         Task<IEnumerable<Productos>> SearchProductsAsync(string searchTerm);
