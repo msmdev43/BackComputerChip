@@ -1,7 +1,10 @@
-﻿namespace computerChip.DTOs.Requests.Pedido
+﻿using computerChip.Models.Enum;
+using System.ComponentModel.DataAnnotations;
+
+namespace computerChip.DTOs.Requests.Pedido
 {
     public class PedidoUpdateEstadoRequest
     {
-        public string Estado { get; set; } = string.Empty; // "CONFIRMADO", "ENVIADO", "ENTREGADO", "CANCELADO"
+        public EstadoPedido Estado { get; set; }
     }
 }

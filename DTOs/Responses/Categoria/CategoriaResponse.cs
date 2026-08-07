@@ -1,9 +1,9 @@
-﻿// DTOs/Responses/Marca/MarcaResponse.cs
+﻿// DTOs/Responses/Categoria/CategoriaResponse.cs
 using computerChip.DTOs.Responses.Productos;
 
-namespace computerChip.DTOs.Responses.Marcas
+namespace computerChip.DTOs.Responses.Categoria
 {
-    public class MarcaResponse
+    public class CategoriaResponse
     {
         public int Id { get; set; }
         public string Nombre { get; set; } = string.Empty;
@@ -12,7 +12,7 @@ namespace computerChip.DTOs.Responses.Marcas
         public bool IsActive { get; set; }
     }
 
-    public class MarcaDetailResponse
+    public class CategoriaDetailResponse
     {
         public int Id { get; set; }
         public string Nombre { get; set; } = string.Empty;

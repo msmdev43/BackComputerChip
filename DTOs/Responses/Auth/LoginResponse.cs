@@ -5,10 +5,10 @@
         public string AccessToken { get; set; } = string.Empty;
         public string RefreshToken { get; set; } = string.Empty;
         public int ExpiresIn { get; set; }
-        public UsuarioResponse Usuario { get; set; } = new();
+        public UsuarioLoginResponse Usuario { get; set; } = new();
     }
 
-    public class UsuarioResponse
+    public class UsuarioLoginResponse
     {
         public int Id { get; set; }
         public string? NombreCompleto { get; set; }
