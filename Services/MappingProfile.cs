@@ -1,8 +1,23 @@
 ﻿using AutoMapper;
-using computerChip.DTOs;
+using computerChip.DTOs.Requests.Admin;
+using computerChip.DTOs.Requests.Atributo;
+using computerChip.DTOs.Requests.Carrito;
+using computerChip.DTOs.Requests.Categoria;
+using computerChip.DTOs.Requests.Especificacion;
+using computerChip.DTOs.Requests.Marcas;
+using computerChip.DTOs.Requests.MetodoPago;
+using computerChip.DTOs.Requests.Oferta;
+using computerChip.DTOs.Requests.Pedido;
+using computerChip.DTOs.Requests.Pregunta;
+using computerChip.DTOs.Requests.Productos;
+using computerChip.DTOs.Requests.PushToken;
+using computerChip.DTOs.Requests.Soporte;
+using computerChip.DTOs.Requests.Usuario;
+using computerChip.DTOs.Requests.ZonaEnvio;
 using computerChip.Models;
+using computerChip.Models.TablasIntermedias;
 
-namespace computerChip.Services
+namespace computerChip.Mappings
 {
     public class MappingProfile : Profile
     {
@@ -11,133 +26,157 @@ namespace computerChip.Services
             // ============================================
             // USUARIO
             // ============================================
-            CreateMap<Usuarios, UsuarioDto>()
-                .ForMember(dest => dest.IsGoogleUser, 
-                    opt => opt.MapFrom(src => src.loginGoogle != null && src.loginGoogle.Any()));
-
-            CreateMap<UsuarioCreateDto, Usuarios>()
+            CreateMap<UsuarioRegisterRequest, Usuarios>()
                 .ForMember(dest => dest.password, opt => opt.Ignore())
                 .ForMember(dest => dest.emailVerify, opt => opt.MapFrom(src => false))
                 .ForMember(dest => dest.createdAt, opt => opt.MapFrom(src => DateTime.Now))
                 .ForMember(dest => dest.updatedAt, opt => opt.MapFrom(src => DateTime.Now));
 
-            CreateMap<UsuarioUpdateDto, Usuarios>()
+            CreateMap<UsuarioUpdateRequest, Usuarios>()
                 .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
 
             // ============================================
             // PRODUCTO
             // ============================================
-            CreateMap<Productos, ProductoDto>()
-                .ForMember(dest => dest.Categorias, 
-                    opt => opt.MapFrom(src => src.categoriasProductos.Select(cp => cp.categoria.nombre)))
-                .ForMember(dest => dest.Marcas, 
-                    opt => opt.MapFrom(src => src.marcasProductos.Select(mp => mp.marca.nombre)))
-                .ForMember(dest => dest.Imagenes, 
-                    opt => opt.MapFrom(src => src.productosImagenes.Select(pi => pi.imagen.url)));
-
-            CreateMap<ProductoCreateDto, Productos>()
+            CreateMap<ProductoCreateRequest, Productos>()
                 .ForMember(dest => dest.createdAt, opt => opt.MapFrom(src => DateTime.Now))
-                .ForMember(dest => dest.updatedAt, opt => opt.MapFrom(src => DateTime.Now));
+                .ForMember(dest => dest.updatedAt, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.CategoriasProductos, opt => opt.Ignore())
+                .ForMember(dest => dest.ProductosMarcas, opt => opt.Ignore())
+                .ForMember(dest => dest.ProductoAtributos, opt => opt.Ignore())
+                .ForMember(dest => dest.ProductosImagenes, opt => opt.Ignore())
+                .ForMember(dest => dest.ProductosEspecificaciones, opt => opt.Ignore());
 
-            CreateMap<ProductoUpdateDto, Productos>()
+            CreateMap<ProductoUpdateRequest, Productos>()
                 .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+
+            // Atributos de producto (intermedio)
+            CreateMap<ProductoAtributoRequest, ProductosAtributos>()
+                .ForMember(dest => dest.productoId, opt => opt.Ignore());
 
             // ============================================
             // CATEGORIA
             // ============================================
-            CreateMap<Categorias, CategoriaDto>()
-                .ForMember(dest => dest.ProductosCount, 
-                    opt => opt.MapFrom(src => src.categoriasProductos.Count));
-
-            CreateMap<CategoriaCreateDto, Categorias>()
+            CreateMap<CategoriaCreateRequest, Categorias>()
                 .ForMember(dest => dest.createdAt, opt => opt.MapFrom(src => DateTime.Now))
                 .ForMember(dest => dest.updatedAt, opt => opt.MapFrom(src => DateTime.Now));
 
-            CreateMap<CategoriaUpdateDto, Categorias>()
+            CreateMap<CategoriaUpdateRequest, Categorias>()
                 .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
 
             // ============================================
             // MARCA
             // ============================================
-            CreateMap<Marcas, MarcaDto>()
-                .ForMember(dest => dest.ProductosCount, 
-                    opt => opt.MapFrom(src => src.marcasProductos.Count));
-
-            CreateMap<MarcaCreateDto, Marcas>()
+            CreateMap<MarcaCreateRequest, Marcas>()
                 .ForMember(dest => dest.createdAt, opt => opt.MapFrom(src => DateTime.Now))
                 .ForMember(dest => dest.updatedAt, opt => opt.MapFrom(src => DateTime.Now));
 
-            CreateMap<MarcaUpdateDto, Marcas>()
+            CreateMap<MarcaUpdateRequest, Marcas>()
                 .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
 
             // ============================================
             // CARRITO
             // ============================================
-            CreateMap<CarritoProductos, CarritoItemDto>()
-                .ForMember(dest => dest.ProductoId, opt => opt.MapFrom(src => src.productoId))
-                .ForMember(dest => dest.ProductoNombre, opt => opt.MapFrom(src => src.producto.nombre))
-                .ForMember(dest => dest.ProductoImagen, 
-                    opt => opt.MapFrom(src => src.producto.productosImagenes.FirstOrDefault().imagen.url));
-
-            CreateMap<Carrito, CarritoDto>()
-                .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.carritoProductos))
-                .ForMember(dest => dest.Total, 
-                    opt => opt.MapFrom(src => src.carritoProductos.Sum(cp => cp.cantidad * cp.precioUnitario)))
-                .ForMember(dest => dest.ItemsCount, 
-                    opt => opt.MapFrom(src => src.carritoProductos.Sum(cp => cp.cantidad)));
+            CreateMap<CarritoAddItemRequest, CarritoProductos>()
+                .ForMember(dest => dest.carritoId, opt => opt.Ignore())
+                .ForMember(dest => dest.createdAt, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.updatedAt, opt => opt.MapFrom(src => DateTime.Now));
 
             // ============================================
             // PEDIDO
             // ============================================
-            CreateMap<ItemPedido, PedidoItemDto>()
-                .ForMember(dest => dest.ProductoId, 
-                    opt => opt.MapFrom(src => src.itemPedidoProductos.FirstOrDefault().productoId))
-                .ForMember(dest => dest.ProductoNombre, 
-                    opt => opt.MapFrom(src => src.itemPedidoProductos.FirstOrDefault().producto.nombre))
-                .ForMember(dest => dest.PrecioUnitario, 
-                    opt => opt.MapFrom(src => src.subtotal / src.cantidad));
-
-            CreateMap<Pedidos, PedidoDto>()
-                .ForMember(dest => dest.UsuarioNombre, opt => opt.MapFrom(src => src.usuario.nombreCompleto))
-                .ForMember(dest => dest.UsuarioEmail, opt => opt.MapFrom(src => src.usuario.email))
-                .ForMember(dest => dest.MetodoPago, opt => opt.MapFrom(src => src.metodoPago.tipo))
-                .ForMember(dest => dest.ZonaEnvio, opt => opt.MapFrom(src => src.zonaEnvio.ciudad))
-                .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.items))
-                .ForMember(dest => dest.Estado, opt => opt.MapFrom(src => src.estado.ToString()));
+            CreateMap<PedidoCreateRequest, Pedidos>()
+                .ForMember(dest => dest.estado, opt => opt.MapFrom(src => computerChip.Models.Enum.EstadoPedido.PENDIENTE))
+                .ForMember(dest => dest.total, opt => opt.Ignore())
+                .ForMember(dest => dest.createdAt, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.updatedAt, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.Items, opt => opt.Ignore());
 
             // ============================================
             // OFERTA
             // ============================================
-            CreateMap<Ofertas, OfertaDto>()
-                .ForMember(dest => dest.ProductosIds, 
-                    opt => opt.MapFrom(src => src.productosOfertas.Select(po => po.productoId)));
-
-            CreateMap<OfertaCreateDto, Ofertas>()
+            CreateMap<OfertaCreateRequest, Ofertas>()
                 .ForMember(dest => dest.createdAt, opt => opt.MapFrom(src => DateTime.Now))
-                .ForMember(dest => dest.updatedAt, opt => opt.MapFrom(src => DateTime.Now));
+                .ForMember(dest => dest.updatedAt, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.ProductosOfertas, opt => opt.Ignore());
 
-            CreateMap<OfertaUpdateDto, Ofertas>()
+            CreateMap<OfertaUpdateRequest, Ofertas>()
                 .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
 
             // ============================================
-            // ADMIN
+            // ESPECIFICACION
             // ============================================
-            CreateMap<Admin, AdminDto>();
+            CreateMap<EspecificacionCreateRequest, Especificaciones>();
+            CreateMap<EspecificacionUpdateRequest, Especificaciones>()
+                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
 
-            CreateMap<AdminCreateDto, Admin>()
-                .ForMember(dest => dest.password, opt => opt.Ignore())
+            // ============================================
+            // ATRIBUTO
+            // ============================================
+            CreateMap<AtributoCreateRequest, Atributos>();
+            CreateMap<AtributoUpdateRequest, Atributos>()
+                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+
+            // ============================================
+            // PREGUNTA
+            // ============================================
+            CreateMap<PreguntaCreateRequest, Preguntas>();
+            CreateMap<PreguntaUpdateRequest, Preguntas>()
+                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+
+            // ============================================
+            // ZONA ENVIO
+            // ============================================
+            CreateMap<ZonaEnvioCreateRequest, ZonaEnvio>();
+            CreateMap<ZonaEnvioUpdateRequest, ZonaEnvio>()
+                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+
+            // ============================================
+            // METODO PAGO
+            // ============================================
+            CreateMap<MetodoPagoCreateRequest, MetodoPago>();
+            CreateMap<MetodoPagoUpdateRequest, MetodoPago>()
+                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+
+            // ============================================
+            // SOPORTE
+            // ============================================
+            CreateMap<SoporteCreateRequest, Soporte>()
+                .ForMember(dest => dest.fecha, opt => opt.MapFrom(src => DateTime.Now));
+
+            // ============================================
+            // PUSH TOKEN
+            // ============================================
+            CreateMap<PushTokenRegisterRequest, PushToken>()
                 .ForMember(dest => dest.createdAt, opt => opt.MapFrom(src => DateTime.Now))
-                .ForMember(dest => dest.updatedAt, opt => opt.MapFrom(src => DateTime.Now));
+                .ForMember(dest => dest.updatedAt, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.adminId, opt => opt.Ignore())
+                .ForMember(dest => dest.usuarioId, opt => opt.Ignore());
 
             // ============================================
             // LOGIN GOOGLE
             // ============================================
-            CreateMap<LoginGoogle, UsuarioDto>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.usuarioId))
-                .ForMember(dest => dest.NombreCompleto, opt => opt.MapFrom(src => src.nombre))
-                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.email))
-                .ForMember(dest => dest.EmailVerify, opt => opt.MapFrom(src => src.emailVerificado))
-                .ForMember(dest => dest.IsGoogleUser, opt => opt.MapFrom(src => true));
+            CreateMap<UsuarioGoogleLoginRequest, LoginGoogle>()
+                .ForMember(dest => dest.emailVerificado, opt => opt.MapFrom(src => true))
+                .ForMember(dest => dest.ultimoLogin, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.createdAt, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.updatedAt, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.usuarioId, opt => opt.Ignore());
+
+            // ============================================
+            // TABLAS INTERMEDIAS (para creación)
+            // ============================================
+            CreateMap<int, CategoriasProductos>()
+                .ForMember(dest => dest.categoriaId, opt => opt.MapFrom(src => src));
+
+            CreateMap<int, ProductosMarcas>()
+                .ForMember(dest => dest.marcaId, opt => opt.MapFrom(src => src));
+
+            CreateMap<int, ProductosEspecificaciones>()
+                .ForMember(dest => dest.especificacionId, opt => opt.MapFrom(src => src));
+
+            CreateMap<ProductoAtributoRequest, ProductosAtributos>()
+                .ForMember(dest => dest.productoId, opt => opt.Ignore());
         }
     }
 }

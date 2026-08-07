@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace computerChip.DTOs.Requests.Marcas
 {
-    public class CrearMarcaRequest
+    public class MarcaCreateRequest
     {
         [Required (ErrorMessage = "El nombre de la marca es obligatorio")]
         [MaxLength(105, ErrorMessage = "El nombre de la marca no puede superar los 105 caracteres")]
