@@ -1,4 +1,5 @@
-﻿using computerChip.Models;
+﻿using computerChip.DTOs.Requests.Pedido;
+using computerChip.Models;
 using computerChip.Models.Enum;
 using computerChip.Models.TablasIntermedias;
 using computerChip.Repositories.Interfaces;
@@ -97,6 +98,11 @@ namespace computerChip.Services.Implementations
         public async Task<decimal> GetMaxVentaAsync()
         {
             return await _pedidoRepository.GetMaxVentaAsync();
+        }
+
+        public async Task<IEnumerable<Pedidos>> GetFilteredAsync(PedidoFilterRequest filter)
+        {
+            return await _pedidoRepository.GetFilteredAsync(filter);
         }
 
         // ============================================

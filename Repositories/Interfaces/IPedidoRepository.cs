@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using computerChip.DTOs.Requests.Pedido;
 using computerChip.Models;
 using computerChip.Models.Enum;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace computerChip.Repositories.Interfaces
 {
@@ -25,5 +26,8 @@ namespace computerChip.Repositories.Interfaces
         Task<int> GetTotalPedidosAsync();
         Task<bool> CancelPedidoAsync(int pedidoId);
         Task<bool> ConfirmPedidoAsync(int pedidoId);
+
+        Task<IEnumerable<Pedidos>> GetFilteredAsync(PedidoFilterRequest filter);
+
     }
 }

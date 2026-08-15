@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using computerChip.DTOs.Requests.Pedido;
 
 namespace computerChip.Repositories.Implementations
 {
@@ -217,6 +218,57 @@ namespace computerChip.Repositories.Implementations
         public async Task<bool> ConfirmPedidoAsync(int pedidoId)
         {
             return await UpdateEstadoAsync(pedidoId, EstadoPedido.CONFIRMADO);
+        }
+
+        public async Task<IEnumerable<Pedidos>> GetFilteredAsync(PedidoFilterRequest filter)
+        {
+            var query = _context.Pedidos
+        .Include(p => p.Usuarios)
+        .Include(p => p.MetodoPago)
+        .Include(p => p.ZonaEnvio)
+        .Include(p => p.Items)
+            .ThenInclude(i => i.ItemPedidoProductos)
+                .ThenInclude(ip => ip.Productos)
+                    .ThenInclude(pr => pr.ProductosImagenes)
+        .AsQueryable();
+
+
+            if (!string.IsNullOrEmpty(filter.Estado) && Enum.TryParse<EstadoPedido>(filter.Estado, true, out var estado))
+            {
+                query = query.Where(p => p.estado == estado);
+            }
+
+            if (filter.UsuarioId.HasValue)
+            {
+                query = query.Where(p => p.UsuarioId == filter.UsuarioId.Value);
+            }
+
+            if (filter.FechaDesde.HasValue)
+            {
+                query = query.Where(p => p.createdAt >= filter.FechaDesde.Value);
+            }
+
+            if (filter.FechaHasta.HasValue)
+            {
+                query = query.Where(p => p.createdAt <= filter.FechaHasta.Value);
+            }
+
+            if (filter.TotalMin.HasValue)
+            {
+                query = query.Where(p => p.total >= filter.TotalMin.Value);
+            }
+
+            if (filter.TotalMax.HasValue)
+            {
+                query = query.Where(p => p.total <= filter.TotalMax.Value);
+            }
+
+            query = query
+                .OrderByDescending(p => p.createdAt)
+                .Skip((filter.Page - 1) * filter.PageSize)
+                .Take(filter.PageSize);
+
+            return await query.ToListAsync();
         }
     }
 }

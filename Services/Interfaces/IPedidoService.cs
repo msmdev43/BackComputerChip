@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using computerChip.DTOs.Requests.Pedido;
 using computerChip.Models;
 using computerChip.Models.Enum;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace computerChip.Services.Interfaces
 {
@@ -25,6 +26,8 @@ namespace computerChip.Services.Interfaces
         Task<decimal> GetTotalVentasByPeriodoAsync(DateTime desde, DateTime hasta);
         Task<decimal> GetPromedioVentaAsync();
         Task<decimal> GetMaxVentaAsync();
+
+        Task<IEnumerable<Pedidos>> GetFilteredAsync(PedidoFilterRequest filter);
 
         // ============================================
         // OPERACIONES DE MODIFICACIÓN
