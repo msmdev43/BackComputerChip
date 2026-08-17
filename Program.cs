@@ -158,7 +158,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseStaticFiles();
+//app.UseStaticFiles();
 
 // 🔥 ORDEN CORRECTO
 app.UseRouting();
@@ -172,6 +172,6 @@ app.MapControllers();
 
 // 🔥 Escuchar solo interno (nginx expone el 80)
 app.Urls.Clear();
-app.Urls.Add("http://0.0.0.0:5173");
+app.Urls.Add("http://0.0.0.0:5200");
 
 app.Run();
