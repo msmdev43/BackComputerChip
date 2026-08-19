@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using computerChip.DTOs.Requests.Pedido;
 using computerChip.DTOs.Responses.Pedido;
+using computerChip.Extensions;
 using computerChip.Models.Enum;
 using computerChip.Services.Implementations;
 using computerChip.Services.Interfaces;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -102,7 +104,7 @@ namespace computerChip.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var usuarioId = 1; // Obtener desde el usuario autenticado
+            var usuarioId = User.GetUserId();
 
             try
             {
