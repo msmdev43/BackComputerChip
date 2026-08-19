@@ -93,6 +93,7 @@ builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<ILoginGoogleRepository, LoginGoogleRepository>();
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
+builder.Services.AddScoped<IPushTokenRepository, PushTokenRepository>();
 
 builder.Services.AddScoped<IProductoRepository, ProductoRepository>();
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
@@ -157,7 +158,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseStaticFiles();
+//app.UseStaticFiles();
 
 // 🔥 ORDEN CORRECTO
 app.UseRouting();
@@ -171,6 +172,6 @@ app.MapControllers();
 
 // 🔥 Escuchar solo interno (nginx expone el 80)
 app.Urls.Clear();
-app.Urls.Add("http://0.0.0.0:5173");
+app.Urls.Add("http://0.0.0.0:5200");
 
 app.Run();

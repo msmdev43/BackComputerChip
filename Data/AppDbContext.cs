@@ -123,7 +123,7 @@ namespace computerChip.Data
 
                 entity.Property(e => e.emailVerify)
                     .HasColumnType("tinyint")
-                    .HasDefaultValue(0);
+                    .HasDefaultValue(false);
 
                 entity.Property(e => e.createdAt)
                     .HasColumnType("datetime")
@@ -189,7 +189,7 @@ namespace computerChip.Data
 
                 entity.Property(e => e.emailVerificado)
                     .HasColumnType("tinyint")
-                    .HasDefaultValue(1);
+                    .HasDefaultValue(true);
 
                 entity.Property(e => e.nombre)
                     .HasColumnType("varchar(150)")
