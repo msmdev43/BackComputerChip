@@ -116,6 +116,7 @@ builder.Services.AddScoped<IOfertaRepository, OfertaRepository>();
 builder.Services.AddScoped<JwtService>();
 
 builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<ILoginGoogleService, LoginGoogleService>();

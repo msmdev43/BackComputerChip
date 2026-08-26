@@ -29,7 +29,7 @@ namespace computerChip.Services.Implementations
         }
 
         // ============================================
-        // OPERACIONES DE LECTURA
+        // OPERACIONES DE LECTURA - SANTANDER TOKEN
         // ============================================
 
         public async Task<SantanderToken?> GetByUsuarioAsync(int usuarioId)
@@ -69,7 +69,7 @@ namespace computerChip.Services.Implementations
         }
 
         // ============================================
-        // OPERACIONES DE MODIFICACIÓN
+        // OPERACIONES DE MODIFICACIÓN - SANTANDER TOKEN
         // ============================================
 
         public async Task<bool> SaveTokenAsync(int usuarioId, string accessToken, string refreshToken, int expiresIn)
@@ -83,7 +83,6 @@ namespace computerChip.Services.Implementations
             if (expiresIn <= 0)
                 throw new ArgumentException("El tiempo de expiración debe ser mayor a 0", nameof(expiresIn));
 
-            // Verificar que el usuario existe
             var usuario = await _usuarioRepository.GetByIdAsync(usuarioId);
             if (usuario == null || usuario.deletedAt != null)
                 throw new InvalidOperationException("El usuario no existe o está desactivado");
@@ -102,7 +101,6 @@ namespace computerChip.Services.Implementations
             if (expiresIn <= 0)
                 throw new ArgumentException("El tiempo de expiración debe ser mayor a 0", nameof(expiresIn));
 
-            // Verificar que el token exista antes de actualizar
             if (!await _tokenRepository.TokenExistsAsync(usuarioId))
                 return false;
 
@@ -122,7 +120,6 @@ namespace computerChip.Services.Implementations
         {
             try
             {
-                // Obtener todos los tokens
                 var allTokens = await _tokenRepository.GetAllAsync();
                 var count = 0;
 
@@ -151,12 +148,10 @@ namespace computerChip.Services.Implementations
 
         public async Task<string> GenerateAccessTokenAsync(int usuarioId)
         {
-            // Obtener el usuario
             var usuario = await _usuarioRepository.GetByIdAsync(usuarioId);
             if (usuario == null || usuario.deletedAt != null)
                 throw new InvalidOperationException("El usuario no existe o está desactivado");
 
-            // Configuración JWT
             var secretKey = _configuration["JWT:SecretKey"] ?? "tu-super-secret-key-minimo-32-caracteres";
             var issuer = _configuration["JWT:Issuer"] ?? "ComputerChip";
             var audience = _configuration["JWT:Audience"] ?? "ComputerChipUsers";
@@ -165,7 +160,6 @@ namespace computerChip.Services.Implementations
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            // Crear claims
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, usuarioId.ToString()),
@@ -178,7 +172,6 @@ namespace computerChip.Services.Implementations
                     ClaimValueTypes.Integer64)
             };
 
-            // Crear token
             var token = new JwtSecurityToken(
                 issuer: issuer,
                 audience: audience,
@@ -238,6 +231,7 @@ namespace computerChip.Services.Implementations
             }
         }
 
+        // ✅ MÉTODO AGREGADO: Obtener ID de usuario desde token
         public async Task<int?> GetUsuarioIdFromTokenAsync(string token)
         {
             if (string.IsNullOrWhiteSpace(token))
@@ -298,6 +292,7 @@ namespace computerChip.Services.Implementations
             }
         }
 
+        // ✅ MÉTODO AGREGADO: Refrescar JWT usando refresh token
         public async Task<string?> RefreshJwtTokenAsync(string refreshToken)
         {
             if (string.IsNullOrWhiteSpace(refreshToken))
@@ -305,7 +300,7 @@ namespace computerChip.Services.Implementations
 
             try
             {
-                // Buscar el token en la base de datos
+                // Buscar el token en la base de datos usando el refresh token
                 var santanderToken = await _tokenRepository.GetByRefreshTokenAsync(refreshToken);
                 if (santanderToken == null)
                     return null;
@@ -318,7 +313,7 @@ namespace computerChip.Services.Implementations
                 // Generar nuevo access token
                 var newAccessToken = await GenerateAccessTokenAsync(santanderToken.usuarioId);
 
-                // Actualizar el token en la base de datos (opcional, si quieres mantener el refresh token)
+                // Opcional: Actualizar el access token en la base de datos
                 // await _tokenRepository.UpdateTokenAsync(santanderToken.usuarioId, newAccessToken, refreshToken, santanderToken.expiresIn);
 
                 return newAccessToken;

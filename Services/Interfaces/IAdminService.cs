@@ -16,5 +16,6 @@ namespace computerChip.Services.Interfaces
         Task<int> GetTotalUsuariosAsync();
         Task<int> GetTotalCategoriasAsync();
         Task<int> GetCantidadProductosPorCategoriaAsync();
+        Task<Admin?> GetByIdAsync(int adminId);
     }
 }

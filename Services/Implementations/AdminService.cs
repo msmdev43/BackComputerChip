@@ -63,5 +63,10 @@ namespace computerChip.Services.Implementations
         {
             return await _adminRepository.GetCantidadProductosPorCategoriaAsync();
         }
+
+        public async Task<Admin?> GetByIdAsync(int adminId)
+        {
+            return await _adminRepository.GetByIdAsync(adminId);
+        }
     }
 }
