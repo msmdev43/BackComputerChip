@@ -1,4 +1,6 @@
-﻿using computerChip.Data;
+﻿using AutoMapper;
+using computerChip.Data;
+using computerChip.Mappings;
 using computerChip.Repositories.Implementations;
 using computerChip.Repositories.Interfaces;
 using computerChip.Services;
@@ -18,6 +20,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 // 🔥 AGREGAR ESTO: Configuración de Logging
 builder.Services.AddLogging(loggingBuilder =>
