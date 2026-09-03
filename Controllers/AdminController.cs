@@ -48,7 +48,7 @@ namespace computerChip.Controllers
         // GET: api/admin/dashboard/stats
         // ============================================
         [HttpGet("dashboard/stats")]
-        [Authorize(Roles = "Admin")]
+      
         public async Task<IActionResult> GetDashboardStats()
         {
             var stats = new DashboardStatsResponse
@@ -89,7 +89,6 @@ namespace computerChip.Controllers
         // GET: api/admin/me
         // ============================================
         [HttpGet("me")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetCurrentAdmin()
         {
             var adminIdClaim = User.FindFirst("usuarioId")?.Value

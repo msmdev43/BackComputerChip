@@ -23,6 +23,11 @@ namespace computerChip.Controllers
         private readonly IPedidoService _pedidoService;
         private readonly IMapper _mapper;
 
+        public PedidosController(IPedidoService pedidoService, IMapper mapper)
+        {
+            _pedidoService = pedidoService;
+            _mapper = mapper;
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] PedidoFilterRequest filter)
