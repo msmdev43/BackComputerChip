@@ -12,6 +12,7 @@ namespace computerChip.Services
         private readonly string _issuer;
         private readonly string _audience;
         private readonly int _expiryInMinutes;
+        private readonly IConfiguration _configuration;
 
         public JwtService(IConfiguration configuration)
         {
@@ -21,6 +22,7 @@ namespace computerChip.Services
             _issuer = jwtSettings["Issuer"]!;
             _audience = jwtSettings["Audience"]!;
             _expiryInMinutes = int.Parse(jwtSettings["ExpiryInMinutes"]!);
+            _configuration = configuration;
         }
 
         public string GenerateToken(Usuarios usuario)
@@ -52,6 +54,34 @@ namespace computerChip.Services
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
             return tokenHandler.WriteToken(token);
+        }
+
+        public string GenerateToken(int id, string usuario)
+        {
+            var jwtSettings = _configuration.GetSection("JwtSettings");
+            var secretKey = jwtSettings["SecretKey"];
+            var issuer = jwtSettings["Issuer"];
+            var audience = jwtSettings["Audience"];
+            var expiryMinutes = Convert.ToDouble(jwtSettings["ExpiryInMinutes"]);
+
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            var claims = new[]
+            {
+        new Claim("usuarioId", id.ToString()),
+        new Claim(ClaimTypes.Name, usuario)
+    };
+
+            var token = new JwtSecurityToken(
+                issuer: issuer,
+                audience: audience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(expiryMinutes),
+                signingCredentials: credentials
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
         public ClaimsPrincipal ValidateToken(string token)

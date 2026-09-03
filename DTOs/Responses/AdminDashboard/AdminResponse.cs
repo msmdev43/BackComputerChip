@@ -8,5 +8,6 @@
         public DateTime? LastLogin { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsActive { get; set; }
+        public string Token { get; set; } = string.Empty;
     }
 }

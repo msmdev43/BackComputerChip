@@ -49,6 +49,7 @@ namespace computerChip.Mappings
     .ForMember(dest => dest.Email, opt => opt.Ignore())
     .ForMember(dest => dest.LastLogin, opt => opt.Ignore())
     .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+    .ForMember(dest => dest.Token, opt => opt.Ignore())
     .ForMember(dest => dest.IsActive, opt => opt.Ignore());
 
             CreateMap<SoporteCreateRequest, Soporte>();

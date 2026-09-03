@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using computerChip.DTOs.Requests.Admin;
 using computerChip.DTOs.Responses.AdminDashboard;
+using computerChip.Services;
 using computerChip.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +14,14 @@ namespace computerChip.Controllers
     {
         private readonly IAdminService _adminService;
         private readonly IMapper _mapper;
+        private readonly JwtService _jwtService;
 
-        public AdminController(IAdminService adminService, IMapper mapper)
+
+        public AdminController(IAdminService adminService, IMapper mapper, JwtService jwtService)
         {
             _adminService = adminService;
             _mapper = mapper;
+            _jwtService = jwtService;
         }
 
         // ============================================
@@ -33,7 +37,10 @@ namespace computerChip.Controllers
             if (admin == null)
                 return Unauthorized(new { Error = "Credenciales inválidas" });
 
+            var token = _jwtService.GenerateToken(admin.id, admin.usuario);
+
             var response = _mapper.Map<AdminResponse>(admin);
+                response.Token = token;
             return Ok(response);
         }
 
