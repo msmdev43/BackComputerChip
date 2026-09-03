@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using computerChip.Data;
 using computerChip.Mappings;
+using computerChip.Models;
 using computerChip.Repositories.Implementations;
 using computerChip.Repositories.Interfaces;
 using computerChip.Services;
@@ -145,6 +146,31 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+
+// ============================================
+// SEED: Crear administrador inicial
+// ============================================
+/*
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    // Verificar si ya existe un admin con el usuario "admin"
+    var adminExiste = await dbContext.Admins.AnyAsync(a => a.usuario == "admin");
+    if (!adminExiste)
+    {
+        var admin = new Admin
+        {
+            usuario = "admin",
+            password = "$2a$12$RJYapF.6ZAy.RtLswh9k0uKo6cqGKe7zYQSBv7Kl.R.WfR4VRgiGW" 
+        };
+        await dbContext.Admins.AddAsync(admin);
+        await dbContext.SaveChangesAsync();
+        Console.WriteLine("✅ Administrador creado exitosamente (usuario: admin)");
+    }
+}
+*/
 
 if (app.Environment.WebRootPath == null)
 {
