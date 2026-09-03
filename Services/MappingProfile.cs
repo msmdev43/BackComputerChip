@@ -43,13 +43,13 @@ namespace computerChip.Mappings
             // ADMIN DASHBOARD y SOPORTE
             // ============================================
             CreateMap<AdminLoginRequest, Admin>();
-            CreateMap<Admin, AdminResponse>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.id))
-                .ForMember(dest => dest.Usuario, opt => opt.MapFrom(src => src.usuario))
-                .ForMember(dest => dest.Email, opt => opt.Ignore())        // No existe en Admin
-                .ForMember(dest => dest.LastLogin, opt => opt.Ignore())   // No existe en Admin
-                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())   // No existe en Admin
-                .ForMember(dest => dest.IsActive, opt => opt.Ignore());   // No existe en Admin
+            CreateMap<Admin, computerChip.DTOs.Responses.AdminDashboard.AdminResponse>()
+    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.id))
+    .ForMember(dest => dest.Usuario, opt => opt.MapFrom(src => src.usuario))
+    .ForMember(dest => dest.Email, opt => opt.Ignore())
+    .ForMember(dest => dest.LastLogin, opt => opt.Ignore())
+    .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+    .ForMember(dest => dest.IsActive, opt => opt.Ignore());
 
             CreateMap<SoporteCreateRequest, Soporte>();
 
