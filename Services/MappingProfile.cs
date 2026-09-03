@@ -43,8 +43,7 @@ namespace computerChip.Mappings
             // ADMIN DASHBOARD y SOPORTE
             // ============================================
             CreateMap<AdminLoginRequest, Admin>();
-
-            CreateMap<Admin, DTOs.Responses.AdminDashboard.AdminResponse>()
+            CreateMap<Admin, AdminResponse>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.id))
                 .ForMember(dest => dest.Usuario, opt => opt.MapFrom(src => src.usuario))
                 .ForMember(dest => dest.Email, opt => opt.Ignore())        // No existe en Admin
