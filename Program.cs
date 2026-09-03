@@ -151,7 +151,7 @@ var app = builder.Build();
 // ============================================
 // SEED: Crear administrador inicial
 // ============================================
-/*
+
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -170,7 +170,7 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine("✅ Administrador creado exitosamente (usuario: admin)");
     }
 }
-*/
+
 
 if (app.Environment.WebRootPath == null)
 {
