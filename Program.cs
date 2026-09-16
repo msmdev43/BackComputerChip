@@ -7,6 +7,7 @@ using computerChip.Repositories.Interfaces;
 using computerChip.Services;
 using computerChip.Services.Implementations;
 using computerChip.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.Google;        // 🔥 NUEVO
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +24,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-// 🔥 AGREGAR ESTO: Configuración de Logging
+// 🔥 Configuración de Logging
 builder.Services.AddLogging(loggingBuilder =>
 {
     loggingBuilder.ClearProviders();
@@ -44,23 +45,77 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = jwtSettings["SecretKey"];
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+// ============================================
+// 🔥 AUTENTICACIÓN: JWT + GOOGLE
+// ============================================
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 
-        options.TokenValidationParameters = new TokenValidationParameters
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]))
+    };
+
+    // 🔥 DEBUG: Ver errores de JWT
+    options.Events = new JwtBearerEvents
+    {
+        OnAuthenticationFailed = context =>
         {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtSettings["Issuer"],
-            ValidAudience = jwtSettings["Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]))
-        };
-    });
+            Console.WriteLine($"❌ JWT Error: {context.Exception.Message}");
+            return Task.CompletedTask;
+        },
+        OnTokenValidated = context =>
+        {
+            Console.WriteLine($"✅ JWT OK: {context.Principal?.Identity?.Name}");
+            return Task.CompletedTask;
+        }
+    };
+})
+// 🔥 NUEVO: Configuración de Google
+.AddGoogle(options =>
+{
+    options.ClientId = builder.Configuration["Authentication:Google:ClientId"]
+        ?? throw new InvalidOperationException("Authentication:Google:ClientId no está configurado");
+    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]
+        ?? throw new InvalidOperationException("Authentication:Google:ClientSecret no está configurado");
+
+    // Ruta de callback (debe coincidir con Google Cloud Console)
+    options.CallbackPath = "/signin-google";
+
+    // Scopes para obtener email y perfil
+    options.Scope.Add("email");
+    options.Scope.Add("profile");
+
+    options.SaveTokens = true;
+
+    // 🔥 Eventos de Google
+    options.Events.OnCreatingTicket = context =>
+    {
+        Console.WriteLine($"✅ Google Auth OK: {context.Principal?.Identity?.Name}");
+        return Task.CompletedTask;
+    };
+
+    options.Events.OnRemoteFailure = context =>
+    {
+        Console.WriteLine($"❌ Google Auth Error: {context.Failure?.Message}");
+        context.Response.Redirect("/login?error=google_auth_failed");
+        context.HandleResponse();
+        return Task.CompletedTask;
+    };
+});
 
 builder.Services.AddAuthorization();
 
@@ -88,9 +143,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     ));
 
 // ============================================
-// INICIO REPOSITORIOS EN EL PROGRAM
+// REPOSITORIOS
 // ============================================
-
 builder.Services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
 
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
@@ -111,11 +165,7 @@ builder.Services.AddScoped<IZonaEnvioRepository, ZonaEnvioRepository>();
 builder.Services.AddScoped<IOfertaRepository, OfertaRepository>();
 
 // ============================================
-// FIN REPOSITORIOS EN EL PROGRAM
-// ============================================
-
-// ============================================
-// INICIO SERVICIOS EN EL PROGRAM
+// SERVICIOS
 // ============================================
 builder.Services.AddScoped<JwtService>();
 
@@ -139,38 +189,35 @@ builder.Services.AddScoped<IZonaEnvioService, ZonaEnvioService>();
 builder.Services.AddScoped<IOfertaService, OfertaService>();
 
 // ============================================
-// FIN SERVICIOS EN EL PROGRAM
+// FILE SERVICE
 // ============================================
+builder.Services.AddScoped<IFileService, FileService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-
 // ============================================
 // SEED: Crear administrador inicial
 // ============================================
-
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-    // Verificar si ya existe un admin con el usuario "admin"
     var adminExiste = await dbContext.Admins.AnyAsync(a => a.usuario == "admin");
     if (!adminExiste)
     {
         var admin = new Admin
         {
             usuario = "admin",
-            password = "$2a$12$RJYapF.6ZAy.RtLswh9k0uKo6cqGKe7zYQSBv7Kl.R.WfR4VRgiGW" 
+            password = "$2a$12$RJYapF.6ZAy.RtLswh9k0uKo6cqGKe7zYQSBv7Kl.R.WfR4VRgiGW"
         };
         await dbContext.Admins.AddAsync(admin);
         await dbContext.SaveChangesAsync();
         Console.WriteLine("✅ Administrador creado exitosamente (usuario: admin)");
     }
 }
-
 
 if (app.Environment.WebRootPath == null)
 {
@@ -188,14 +235,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.UseStaticFiles();
-
 // 🔥 ORDEN CORRECTO
 app.UseRouting();
 
 app.UseCors("FrontendPolicy");
 
-app.UseAuthentication();
+app.UseAuthentication();  // 🔥 Debe ir ANTES de UseAuthorization
 app.UseAuthorization();
 
 app.MapControllers();
