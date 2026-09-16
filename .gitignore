@@ -1,5 +1,5 @@
 # ============================================
-# ASP.NET Core / .NET Core específico
+# ASP.NET Core / .NET Core especÃ­fico
 # ============================================
 
 ## Build output
@@ -153,6 +153,7 @@ msbuild.wrn
 *.dbproj.schemaview
 
 ## ASP.NET Core specific
+appsettings.json
 appsettings.Development.json
 appsettings.Staging.json
 appsettings.Production.json
@@ -329,7 +330,7 @@ packages/
 *.pid
 
 # ============================================
-# Específico para tu proyecto ComputerChip
+# EspecÃ­fico para tu proyecto ComputerChip
 # ============================================
 
 ## Migrations backup (si usas EF Core)
@@ -355,7 +356,7 @@ packages/
 **/Certificates/
 **/certs/
 
-## Archivos de configuración local
+## Archivos de configuraciÃ³n local
 **/local.settings.json
 **/appsettings.Local.json
 **/appsettings.Development.local.json
