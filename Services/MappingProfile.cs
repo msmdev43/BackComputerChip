@@ -89,7 +89,11 @@ namespace computerChip.Mappings
 
             CreateMap<Atributos, AtributoResponse>();
 
-            CreateMap<Productos, ProductoResponse>();
+            CreateMap<Productos, ProductoResponse>()
+                .ForMember(dest => dest.Categorias,
+        opt => opt.MapFrom(src => src.CategoriasProductos.Select(cp => cp.Categorias)))
+    .ForMember(dest => dest.Marcas,
+        opt => opt.MapFrom(src => src.ProductosMarcas.Select(mp => mp.Marcas)));
             CreateMap<Productos, ProductoMarcaResponse>();
             CreateMap<Productos, ProductoCategoriaResponse>();
             CreateMap<Productos, ProductoImagenResponse>();
@@ -105,6 +109,10 @@ namespace computerChip.Mappings
 
             CreateMap<Categorias, CategoriaResponse>();
             CreateMap<Categorias, CategoriaDetailResponse>();
+
+
+            CreateMap<Categorias, ProductoCategoriaResponse>();
+            CreateMap<Marcas, ProductoMarcaResponse>();
 
             // ============================================
             // MARCAS

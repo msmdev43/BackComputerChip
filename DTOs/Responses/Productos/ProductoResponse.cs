@@ -12,8 +12,8 @@
         public bool EnvioGratis { get; set; }
         public string? CodigoSerie { get; set; }
         public DateTime CreatedAt { get; set; }
-        public List<string> Categorias { get; set; } = new();
-        public List<string> Marcas { get; set; } = new();
+        public List<ProductoCategoriaResponse> Categorias { get; set; } = new();
+        public List<ProductoMarcaResponse> Marcas { get; set; } = new();
         public List<string> Imagenes { get; set; } = new();
         public List<ProductoEspecificacionResponse> Especificaciones { get; set; } = new();
         public List<ProductoAtributoResponse> Atributos { get; set; } = new();
@@ -38,13 +38,11 @@
 
     public class ProductoCategoriaResponse
     {
-        public int id { get; set; }
         public string nombre { get; set; } = string.Empty;
     }
 
     public class ProductoMarcaResponse
     {
-        public int id { get; set; }
         public string nombre { get; set; }
     }
 
