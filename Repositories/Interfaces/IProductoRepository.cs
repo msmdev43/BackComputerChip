@@ -8,6 +8,7 @@ namespace computerChip.Repositories.Interfaces
     {
         Task<IEnumerable<Productos>> GetByCategoriaAsync(int categoriaId);
         Task<IEnumerable<Productos>> GetByMarcaAsync(int marcaId);
+        Task<Productos?> GetWithCategoriasMarcasAsync(int id);
         Task<IEnumerable<Productos>> GetByPrecioRangeAsync(decimal min, decimal max);
         Task<IEnumerable<Productos>> GetOnSaleAsync();
 
@@ -20,7 +21,6 @@ namespace computerChip.Repositories.Interfaces
         Task<IEnumerable<Productos>> SearchProductsAsync(string searchTerm);
         Task<IEnumerable<Productos>> GetAllWithFullDetailsAsync();
         Task<Productos?> GetWithFullDetailsByIdAsync(int id);
-        Task<Productos?> GetWithCategoriasMarcasAsync(int id);
 
         //Task<IEnumerable<Productos>> GetTopSellingAsync(int top);
         

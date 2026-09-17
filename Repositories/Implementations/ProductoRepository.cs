@@ -22,6 +22,9 @@ namespace computerChip.Repositories.Implementations
         {
             return await _context.Productos
                 .Include(p => p.CategoriasProductos)
+                    .ThenInclude(cp => cp.Categorias)   // 👈 esto faltaba
+                .Include(p => p.ProductosMarcas)
+                    .ThenInclude(mp => mp.Marcas)       // 👈 y esto también
                 .Where(p => p.CategoriasProductos.Any(cp => cp.categoriaId == categoriaId)
                             && p.deletedAt == null)
                 .OrderBy(p => p.nombre)
@@ -31,11 +34,24 @@ namespace computerChip.Repositories.Implementations
         public async Task<IEnumerable<Productos>> GetByMarcaAsync(int marcaId)
         {
             return await _context.Productos
+                .Include(p => p.CategoriasProductos)
+                    .ThenInclude(cp => cp.Categorias)
                 .Include(p => p.ProductosMarcas)
+                    .ThenInclude(mp => mp.Marcas)
                 .Where(p => p.ProductosMarcas.Any(mp => mp.marcaId == marcaId)
                             && p.deletedAt == null)
                 .OrderBy(p => p.nombre)
                 .ToListAsync();
+        }
+
+        public async Task<Productos?> GetWithCategoriasMarcasAsync(int id)
+        {
+            return await _context.Productos
+                .Include(p => p.CategoriasProductos)
+                    .ThenInclude(cp => cp.Categorias)
+                .Include(p => p.ProductosMarcas)
+                    .ThenInclude(mp => mp.Marcas)
+                .FirstOrDefaultAsync(p => p.id == id && p.deletedAt == null);
         }
 
         public async Task<IEnumerable<Productos>> GetByPrecioRangeAsync(decimal min, decimal max)
@@ -159,16 +175,6 @@ namespace computerChip.Repositories.Implementations
                     .ThenInclude(po => po.Ofertas)
                 .Include(p => p.CarritoProductos)
                 .Include(p => p.ItemsPedidoProductos)
-                .FirstOrDefaultAsync(p => p.id == id && p.deletedAt == null);
-        }
-
-        public async Task<Productos?> GetWithCategoriasMarcasAsync(int id)
-        {
-            return await _context.Productos
-                .Include(p => p.CategoriasProductos)
-                    .ThenInclude(cp => cp.Categorias)
-                .Include(p => p.ProductosMarcas)
-                    .ThenInclude(mp => mp.Marcas)
                 .FirstOrDefaultAsync(p => p.id == id && p.deletedAt == null);
         }
 

@@ -50,6 +50,11 @@ namespace computerChip.Services.Implementations
             return await _productoRepository.GetByMarcaAsync(marcaId);
         }
 
+        public async Task<Productos?> GetWithCategoriasMarcasAsync(int id)
+        {
+            return await _productoRepository.GetWithCategoriasMarcasAsync(id);
+        }
+
         public async Task<IEnumerable<Productos>> GetByPrecioRangeAsync(decimal min, decimal max)
         {
             return await _productoRepository.GetByPrecioRangeAsync(min, max);

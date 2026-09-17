@@ -256,5 +256,16 @@ namespace computerChip.Controllers
 
             return Ok(new { mensaje = "Marcas eliminadas correctamente" });
         }
+
+        [HttpGet("{id}/categoriasmarcas")]
+        public async Task<ActionResult<ProductoResponse>> GetWithCategoriasMarcas(int id)
+        {
+            var producto = await productoService.GetWithCategoriasMarcasAsync(id);
+            if (producto == null)
+                return NotFound($"Producto con ID {id} no encontrado");
+
+            var response = mapper.Map<ProductoResponse>(producto);
+            return Ok(response);
+        }
     }
 }
