@@ -880,6 +880,12 @@ namespace computerChip.Data
             {
                 entity.HasKey(e => new { e.categoriaId, e.productoId });
 
+                entity.Property(e => e.categoriaId)
+                    .HasColumnName("categorias_idcategorias");
+
+                entity.Property(e => e.productoId)
+                    .HasColumnName("productos_idproductos");
+
                 entity.HasOne(e => e.Categorias)
                     .WithMany(e => e.CategoriasProductos)
                     .HasForeignKey(e => e.categoriaId)
@@ -895,6 +901,12 @@ namespace computerChip.Data
             modelBuilder.Entity<ProductosMarcas>(entity =>
             {
                 entity.HasKey(e => new { e.productoId, e.marcaId });
+
+                entity.Property(e => e.productoId)
+                    .HasColumnName("productos_idproductos");
+
+                entity.Property(e => e.marcaId)
+                    .HasColumnName("marcas_idmarcas");
 
                 entity.HasOne(e => e.Productos)
                     .WithMany(e => e.ProductosMarcas)

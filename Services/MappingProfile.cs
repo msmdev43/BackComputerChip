@@ -81,6 +81,8 @@ namespace computerChip.Mappings
             // PRODUCTOS y ATRIBUTOS
             // ============================================
             CreateMap<ProductoCreateRequest, Productos>();
+            CreateMap<ProductoSearchRequest, Productos>();
+            CreateMap<ProductoStockRequest, Productos>();
             CreateMap<ProductoUpdateRequest, Productos>();
 
             CreateMap<AtributoCreateRequest, Atributos>();
@@ -88,6 +90,9 @@ namespace computerChip.Mappings
             CreateMap<Atributos, AtributoResponse>();
 
             CreateMap<Productos, ProductoResponse>();
+            CreateMap<Productos, ProductoMarcaResponse>();
+            CreateMap<Productos, ProductoCategoriaResponse>();
+            CreateMap<Productos, ProductoImagenResponse>();
             CreateMap<Productos, ProductoListResponse>();
             CreateMap<Productos, ProductoMiniResponse>();
             CreateMap<Productos, ProductoMasVendidoResponse>();
