@@ -122,17 +122,11 @@ namespace computerChip.Services.Implementations
             await _productoRepository.AddAsync(producto);
             await _productoRepository.SaveChangesAsync();
 
-            // Agregar categorías
             if (categoriaIds != null && categoriaIds.Any())
-            {
                 await AddCategoriesToProductAsync(producto.id, categoriaIds);
-            }
 
-            // Agregar marcas
             if (marcaIds != null && marcaIds.Any())
-            {
                 await AddBrandsToProductAsync(producto.id, marcaIds);
-            }
 
             return producto;
         }
@@ -195,7 +189,6 @@ namespace computerChip.Services.Implementations
                 return false;
             }
         }
-
         public async Task<bool> AddCategoriesToProductAsync(int productoId, List<int> categoriaIds)
         {
             try
@@ -216,11 +209,11 @@ namespace computerChip.Services.Implementations
                     }
                 }
 
-                _productoRepository.Update(producto);
                 return await _productoRepository.SaveChangesAsync();
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine($"Error AddCategories: {ex}");
                 return false;
             }
         }
@@ -270,12 +263,11 @@ namespace computerChip.Services.Implementations
                         });
                     }
                 }
-
-                _productoRepository.Update(producto);
                 return await _productoRepository.SaveChangesAsync();
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine($"Error AddBrands: {ex}");
                 return false;
             }
         }
