@@ -86,19 +86,87 @@ namespace computerChip.Mappings
             CreateMap<ProductoUpdateRequest, Productos>();
 
             CreateMap<AtributoCreateRequest, Atributos>();
+            CreateMap<AtributoUpdateRequest, Atributos>();
 
-            CreateMap<Atributos, AtributoResponse>();
+            CreateMap<Atributos, AtributoResponse>()
+                .ForMember(d => d.Id, o => o.MapFrom(s => s.id))
+                .ForMember(d => d.Nombre, o => o.MapFrom(s => s.nombre));
 
+            CreateMap<Atributos, AtributoDetailResponse>()
+                .ForMember(d => d.Id, o => o.MapFrom(s => s.id))
+                .ForMember(d => d.Nombre, o => o.MapFrom(s => s.nombre))
+                .ForMember(d => d.Productos,
+                    o => o.MapFrom(s => s.ProductosAtributos.Select(pa => pa.Productos)));
+
+            // ---------- MAPEO PRINCIPAL DE PRODUCTO ----------
             CreateMap<Productos, ProductoResponse>()
-                .ForMember(dest => dest.Categorias,
-        opt => opt.MapFrom(src => src.CategoriasProductos.Select(cp => cp.Categorias)))
-    .ForMember(dest => dest.Marcas,
-        opt => opt.MapFrom(src => src.ProductosMarcas.Select(mp => mp.Marcas)));
-            CreateMap<Productos, ProductoMarcaResponse>();
-            CreateMap<Productos, ProductoCategoriaResponse>();
-            CreateMap<Productos, ProductoImagenResponse>();
+                // Categorías → List<ProductoCategoriaResponse>
+                .ForMember(d => d.Categorias,
+                    o => o.MapFrom(s => s.CategoriasProductos.Select(cp => cp.Categorias)))
+                // Marcas → List<ProductoMarcaResponse>
+                .ForMember(d => d.Marcas,
+                    o => o.MapFrom(s => s.ProductosMarcas.Select(pm => pm.Marcas)))
+                // Imágenes → List<string> (solo URLs, ordenadas)
+                .ForMember(d => d.Imagenes,
+                    o => o.MapFrom(s => s.ProductosImagenes
+                        .OrderBy(pi => pi.orden)
+                        .Select(pi => pi.Imagenes.url)
+                        .ToList()))
+                // Especificaciones → List<ProductoEspecificacionResponse>
+                .ForMember(d => d.Especificaciones,
+                    o => o.MapFrom(s => s.ProductosEspecificaciones.Select(pe => pe.Especificaciones)))
+                // Atributos → List<ProductoAtributoResponse>
+                .ForMember(d => d.Atributos,
+                    o => o.MapFrom(s => s.ProductoAtributos))
+                // EnvioGratis: bool
+                .ForMember(d => d.EnvioGratis,
+                    o => o.MapFrom(s => s.envioGratis));
+
+            CreateMap<ProductosAtributos, AsignacionAtributoResponse>()
+                .ForMember(d => d.ProductoId, o => o.MapFrom(s => s.productoId))
+                .ForMember(d => d.ProductoNombre, o => o.MapFrom(s => s.Productos.nombre))
+                .ForMember(d => d.AtributoId, o => o.MapFrom(s => s.atributoId))
+                .ForMember(d => d.AtributoNombre, o => o.MapFrom(s => s.Atributos.nombre))
+                .ForMember(d => d.Valor, o => o.MapFrom(s => s.valor));
+
+            // ---------- MAPEOS DE TIPOS ANIDADOS ----------
+
+            // Categoría → ProductoCategoriaResponse
+            CreateMap<Categorias, ProductoCategoriaResponse>()
+                .ForMember(d => d.nombre, o => o.MapFrom(s => s.nombre));
+
+            // Marca → ProductoMarcaResponse
+            CreateMap<Marcas, ProductoMarcaResponse>()
+                .ForMember(d => d.nombre, o => o.MapFrom(s => s.nombre));
+
+            // Imagen → ProductoImagenResponse (por si lo usás en otro DTO)
+            CreateMap<Imagenes, ProductoImagenResponse>()
+                .ForMember(d => d.id, o => o.MapFrom(s => s.id))
+                .ForMember(d => d.nombre, o => o.MapFrom(s => s.nombre))
+                .ForMember(d => d.url, o => o.MapFrom(s => s.url));
+
+            // Especificación → ProductoEspecificacionResponse
+            CreateMap<Especificaciones, ProductoEspecificacionResponse>()
+                .ForMember(d => d.Id, o => o.MapFrom(s => s.id))
+                .ForMember(d => d.Titulo, o => o.MapFrom(s => s.titulo))
+                .ForMember(d => d.Descripcion, o => o.MapFrom(s => s.descripcion));
+
+            // Relación ProductosAtributos → ProductoAtributoResponse
+            CreateMap<ProductosAtributos, ProductoAtributoResponse>()
+                .ForMember(d => d.Id, o => o.MapFrom(s => s.atributoId))
+                .ForMember(d => d.Nombre, o => o.MapFrom(s => s.Atributos.nombre))
+                .ForMember(d => d.Valor, o => o.MapFrom(s => s.valor));
+
+            // ---------- OTROS RESPONSES ----------
             CreateMap<Productos, ProductoListResponse>();
-            CreateMap<Productos, ProductoMiniResponse>();
+
+            CreateMap<Productos, ProductoMiniResponse>()
+                .ForMember(d => d.ImagenPrincipal,
+                    o => o.MapFrom(s => s.ProductosImagenes
+                        .OrderBy(pi => pi.orden)
+                        .Select(pi => pi.Imagenes.url)
+                        .FirstOrDefault()));
+
             CreateMap<Productos, ProductoMasVendidoResponse>();
 
             // ============================================
@@ -109,10 +177,6 @@ namespace computerChip.Mappings
 
             CreateMap<Categorias, CategoriaResponse>();
             CreateMap<Categorias, CategoriaDetailResponse>();
-
-
-            CreateMap<Categorias, ProductoCategoriaResponse>();
-            CreateMap<Marcas, ProductoMarcaResponse>();
 
             // ============================================
             // MARCAS

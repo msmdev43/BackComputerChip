@@ -154,6 +154,7 @@ builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 builder.Services.AddScoped<IPushTokenRepository, PushTokenRepository>();
 
 builder.Services.AddScoped<IProductoRepository, ProductoRepository>();
+builder.Services.AddScoped<IAtributoRepository, AtributoRepository>();
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddScoped<IMarcaRepository, MarcaRepository>();
 builder.Services.AddScoped<IEspecificacionesRepository, EspecificacionesRepository>();
@@ -178,6 +179,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IPushTokenService, PushTokenService>();
 
 builder.Services.AddScoped<IProductoService, ProductoService>();
+builder.Services.AddScoped<IAtributoService, AtributoService>();
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 builder.Services.AddScoped<IMarcaService, MarcaService>();
 builder.Services.AddScoped<IEspecificacionesService, EspecificacionesService>();

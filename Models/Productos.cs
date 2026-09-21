@@ -30,7 +30,7 @@ namespace computerChip.Models
         public bool stock { get; set; }
 
         [Column("envioGratis")]
-        public int envioGratis { get; set; }
+        public bool envioGratis { get; set; }
 
         [Column("codigoSerie")]
         [MaxLength(85)]
