@@ -207,7 +207,7 @@ namespace computerChip.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var resultado = await _atributoService.CompararProductosAsync(request.ProductoIds);
-            return Ok(resultado);
+            return Ok(resultado);     
         }
 
         [HttpGet("asignaciones")]

@@ -27,6 +27,7 @@ namespace computerChip.Controllers
         // ============================================
         // POST: api/admin/login
         // ============================================
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] AdminLoginRequest request)
         {
@@ -47,6 +48,7 @@ namespace computerChip.Controllers
         // ============================================
         // GET: api/admin/dashboard/stats
         // ============================================
+
         [HttpGet("dashboard/stats")]
       
         public async Task<IActionResult> GetDashboardStats()
