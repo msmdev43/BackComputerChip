@@ -44,7 +44,16 @@ namespace computerChip.Services.Implementations
                 refreshToken
             );
 
+            if (loginGoogle == null)
+                return null; //Fallo al crear o actualizar el login de Google
+
             var usuario = loginGoogle.Usuarios;
+
+            if (usuario == null && loginGoogle.usuarioId > 0)
+            {
+                usuario = await _usuarioService.GetByIdAsync(loginGoogle.usuarioId);
+            }
+                
 
             // Generar tokens JWT
             var accessToken = await _tokenService.GenerateAccessTokenAsync(usuario.id);

@@ -157,7 +157,7 @@ namespace computerChip.Services.Implementations
             var audience = _configuration["JWT:Audience"] ?? "ComputerChipUsers";
             var expireMinutes = int.Parse(_configuration["JWT:ExpireMinutes"] ?? "60");
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"]));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]

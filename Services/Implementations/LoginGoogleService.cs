@@ -56,11 +56,11 @@ namespace computerChip.Services.Implementations
             string googleSub,
             string email,
             string nombre,
-            string avatarUrl,
+            string? avatarUrl,
             string? refreshToken)
         {
             // Buscar por Google Sub
-            var loginGoogle = await _loginGoogleRepository.GetByGoogleSubAsync(googleSub);
+            var loginGoogle = await _loginGoogleRepository.GetByGoogleSubWithUsuarioAsync(googleSub);
 
             if (loginGoogle != null)
             {
@@ -105,7 +105,8 @@ namespace computerChip.Services.Implementations
                 refreshToken = refreshToken,
                 ultimoLogin = DateTime.Now,
                 createdAt = DateTime.Now,
-                updatedAt = DateTime.Now
+                updatedAt = DateTime.Now,
+                Usuarios = usuario
             };
 
             await _loginGoogleRepository.AddAsync(loginGoogle);
