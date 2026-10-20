@@ -7,7 +7,7 @@
         public decimal Precio { get; set; }
         public decimal? PrecioOferta { get; set; }
         public string Garantia { get; set; } = string.Empty;
-        public bool Stock { get; set; }  // ✅ true = disponible, false = no disponible
+        public bool Stock { get; set; } 
         public string StockText => Stock ? "Disponible" : "No disponible";
         public bool EnvioGratis { get; set; }
         public string? CodigoSerie { get; set; }
