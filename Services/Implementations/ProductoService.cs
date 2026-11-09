@@ -40,6 +40,11 @@ namespace computerChip.Services.Implementations
             return await _productoRepository.GetAllWithFullDetailsAsync();
         }
 
+        public async Task<IEnumerable<Productos>> GetAllForAdminAsync()
+        {
+            return await _productoRepository.GetAllForAdminAsync();
+        }
+
         public async Task<IEnumerable<Productos>> GetByCategoriaAsync(int categoriaId)
         {
             return await _productoRepository.GetByCategoriaAsync(categoriaId);

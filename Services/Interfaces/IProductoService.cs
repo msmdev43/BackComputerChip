@@ -11,6 +11,7 @@ namespace computerChip.Services.Interfaces
         // ============================================
         Task<Productos?> GetByIdAsync(int id);
         Task<IEnumerable<Productos>> GetAllActiveAsync();
+        Task<IEnumerable<Productos>> GetAllForAdminAsync();
         Task<IEnumerable<Productos>> GetByCategoriaAsync(int categoriaId);
         Task<IEnumerable<Productos>> GetByMarcaAsync(int marcaId);
         Task<Productos?> GetWithCategoriasMarcasAsync(int id);

@@ -68,9 +68,10 @@ namespace computerChip.Services
 
             var claims = new[]
             {
-        new Claim("usuarioId", id.ToString()),
-        new Claim(ClaimTypes.Name, usuario)
-    };
+                new Claim("usuarioId", id.ToString()),
+                new Claim(ClaimTypes.Name, usuario),
+                new Claim(ClaimTypes.Role, "Admin")
+            };
 
             var token = new JwtSecurityToken(
                 issuer: issuer,

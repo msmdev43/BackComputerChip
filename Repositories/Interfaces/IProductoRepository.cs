@@ -20,10 +20,11 @@ namespace computerChip.Repositories.Interfaces
         Task<IEnumerable<Productos>> GetNewProductsAsync(int days);
         Task<IEnumerable<Productos>> SearchProductsAsync(string searchTerm);
         Task<IEnumerable<Productos>> GetAllWithFullDetailsAsync();
+        Task<IEnumerable<Productos>> GetAllForAdminAsync();
         Task<Productos?> GetWithFullDetailsByIdAsync(int id);
 
         //Task<IEnumerable<Productos>> GetTopSellingAsync(int top);
-        
+
         Task<IEnumerable<Productos>> GetRelatedProductsAsync(int productId);
         Task<decimal> GetAveragePriceAsync();
         Task<decimal> GetMinPriceAsync();

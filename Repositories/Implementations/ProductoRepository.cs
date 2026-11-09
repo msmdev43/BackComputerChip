@@ -156,6 +156,19 @@ namespace computerChip.Repositories.Implementations
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Productos>> GetAllForAdminAsync()
+        {
+            return await _context.Productos
+                .AsNoTracking()
+                .Include(p => p.CategoriasProductos)
+                    .ThenInclude(cp => cp.Categorias)
+                .Include(p => p.ProductosMarcas)
+                    .ThenInclude(mp => mp.Marcas)
+                .OrderBy(p => p.nombre)
+                .ThenBy(p => p.id)
+                .ToListAsync();
+        }
+
         public async Task<Productos?> GetWithFullDetailsByIdAsync(int id)
         {
             return await _context.Productos

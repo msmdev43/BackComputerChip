@@ -4,6 +4,7 @@ using computerChip.DTOs.Responses.Productos;
 using computerChip.Models;
 using computerChip.Services.Implementations;
 using computerChip.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace computerChip.Controllers
@@ -27,6 +28,32 @@ namespace computerChip.Controllers
             var productos = await productoService.GetAllActiveAsync();
             var response = mapper.Map<IEnumerable<ProductoResponse>>(productos);
             return Ok(response);
+        }
+
+        [HttpGet("admin")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllForAdmin()
+        {
+            var productos = await productoService.GetAllForAdminAsync();
+            return Ok(productos.Select(producto => new
+            {
+                producto.id,
+                producto.nombre,
+                producto.precio,
+                producto.stock,
+                producto.codigoSerie,
+                producto.deletedAt,
+                categorias = producto.CategoriasProductos.Select(relacion => new
+                {
+                    id = relacion.categoriaId,
+                    relacion.Categorias.nombre
+                }),
+                marcas = producto.ProductosMarcas.Select(relacion => new
+                {
+                    id = relacion.marcaId,
+                    relacion.Marcas.nombre
+                })
+            }));
         }
 
         [HttpGet("{id}")]
