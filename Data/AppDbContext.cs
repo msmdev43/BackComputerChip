@@ -41,6 +41,8 @@ namespace computerChip.Data
         public DbSet<Admin> Admins { get; set; }
         public DbSet<PushToken> PushTokens { get; set; }
         public DbSet<SantanderToken> SantanderTokens { get; set; }
+        public DbSet<Cotizacion> Cotizaciones { get; set; }
+        public DbSet<ItemCotizacion> ItemsCotizacion { get; set; }
 
         // ============================================
         // DbSets - TABLAS INTERMEDIAS
@@ -163,6 +165,11 @@ namespace computerChip.Data
                     .WithOne(e => e.Usuarios)
                     .HasForeignKey(e => e.usuarioId)
                     .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasMany(e => e.Cotizaciones)
+                    .WithOne(e => e.Usuario)
+                    .HasForeignKey(e => e.UsuarioId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             // ---------- LOGIN GOOGLE ----------
@@ -553,8 +560,7 @@ namespace computerChip.Data
                     .IsRequired();
 
                 entity.Property(e => e.costo)
-                    .HasColumnType("varchar(65)")
-                    .HasMaxLength(65)
+                    .HasColumnType("decimal(10,2)")
                     .IsRequired();
 
                 entity.Property(e => e.codigoPostal)
@@ -869,6 +875,153 @@ namespace computerChip.Data
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("CURRENT_TIMESTAMP")
                     .ValueGeneratedOnAddOrUpdate();
+            });
+
+            // ---------- COTIZACION ----------
+            modelBuilder.Entity<Cotizacion>(entity =>
+            {
+                entity.HasKey(e => e.id);
+
+                entity.Property(e => e.id)
+                    .HasColumnType("varchar(32)")
+                    .HasMaxLength(32)
+                    .IsRequired();
+
+                entity.Property(e => e.UsuarioId)
+                    .HasColumnType("int")
+                    .IsRequired();
+
+                entity.Property(e => e.compradorNombre)
+                    .HasColumnType("varchar(150)")
+                    .HasMaxLength(150)
+                    .IsRequired();
+
+                entity.Property(e => e.compradorEmail)
+                    .HasColumnType("varchar(254)")
+                    .HasMaxLength(254)
+                    .IsRequired();
+
+                entity.Property(e => e.compradorTelefono)
+                    .HasColumnType("varchar(40)")
+                    .HasMaxLength(40)
+                    .IsRequired();
+
+                entity.Property(e => e.entregaTipo)
+                    .HasColumnType("varchar(20)")
+                    .HasMaxLength(20)
+                    .IsRequired();
+
+                entity.Property(e => e.entregaProvincia)
+                    .HasColumnType("varchar(100)")
+                    .HasMaxLength(100)
+                    .IsRequired(false);
+
+                entity.Property(e => e.entregaCiudad)
+                    .HasColumnType("varchar(100)")
+                    .HasMaxLength(100)
+                    .IsRequired(false);
+
+                entity.Property(e => e.entregaCodigoPostal)
+                    .HasColumnType("varchar(20)")
+                    .HasMaxLength(20)
+                    .IsRequired(false);
+
+                entity.Property(e => e.entregaDireccion)
+                    .HasColumnType("varchar(200)")
+                    .HasMaxLength(200)
+                    .IsRequired(false);
+
+                entity.Property(e => e.observaciones)
+                    .HasColumnType("varchar(1000)")
+                    .HasMaxLength(1000)
+                    .IsRequired(false);
+
+                entity.Property(e => e.subtotal)
+                    .HasColumnType("decimal(10,2)")
+                    .IsRequired();
+
+                entity.Property(e => e.envio)
+                    .HasColumnType("decimal(10,2)")
+                    .IsRequired();
+
+                entity.Property(e => e.total)
+                    .HasColumnType("decimal(10,2)")
+                    .IsRequired();
+
+                entity.Property(e => e.puedeConfirmar)
+                    .HasColumnType("tinyint")
+                    .IsRequired();
+
+                entity.Property(e => e.advertencias)
+                    .HasColumnType("text")
+                    .IsRequired(false);
+
+                entity.Property(e => e.fechaCreacion)
+                    .HasColumnType("datetime")
+                    .IsRequired();
+
+                entity.Property(e => e.fechaVencimiento)
+                    .HasColumnType("datetime")
+                    .IsRequired();
+
+                entity.Property(e => e.utilizada)
+                    .HasColumnType("tinyint")
+                    .HasDefaultValue(false);
+
+                // Índices para consultas y vencimientos
+                entity.HasIndex(e => e.UsuarioId)
+                    .HasDatabaseName("IX_Cotizaciones_UsuarioId");
+
+                entity.HasIndex(e => new { e.utilizada, e.fechaVencimiento })
+                    .HasDatabaseName("IX_Cotizaciones_Utilizada_Vencimiento");
+
+                // Relación con los detalles
+                entity.HasMany(e => e.Items)
+                    .WithOne(e => e.Cotizacion)
+                    .HasForeignKey(e => e.CotizacionId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // ---------- ITEM COTIZACION ----------
+            modelBuilder.Entity<ItemCotizacion>(entity =>
+            {
+                entity.HasKey(e => e.id);
+
+                entity.Property(e => e.id)
+                    .HasColumnType("int")
+                    .UseMySqlIdentityColumn();
+
+                entity.Property(e => e.CotizacionId)
+                    .HasColumnType("varchar(32)")
+                    .HasMaxLength(32)
+                    .IsRequired();
+
+                entity.Property(e => e.ProductoId)
+                    .HasColumnType("int")
+                    .IsRequired();
+
+                entity.Property(e => e.Nombre)
+                    .HasColumnType("varchar(255)")
+                    .HasMaxLength(255)
+                    .IsRequired();
+
+                entity.Property(e => e.PrecioUnitario)
+                    .HasColumnType("decimal(10,2)")
+                    .IsRequired();
+
+                entity.Property(e => e.Cantidad)
+                    .HasColumnType("int")
+                    .IsRequired();
+
+                entity.Property(e => e.Subtotal)
+                    .HasColumnType("decimal(10,2)")
+                    .IsRequired();
+
+                entity.HasIndex(e => e.CotizacionId)
+                    .HasDatabaseName("IX_CotizacionesItems_CotizacionId");
+
+                // ProductoId se conserva como referencia histórica,
+                // sin FK hacia Productos.
             });
 
             // ============================================================

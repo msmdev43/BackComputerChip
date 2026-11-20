@@ -10,6 +10,7 @@ namespace computerChip.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "Admin")]
     public class AdminController : ControllerBase
     {
         private readonly IAdminService _adminService;
@@ -27,7 +28,7 @@ namespace computerChip.Controllers
         // ============================================
         // POST: api/admin/login
         // ============================================
-
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] AdminLoginRequest request)
         {

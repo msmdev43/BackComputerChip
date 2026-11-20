@@ -147,6 +147,111 @@ namespace computerChip.Migrations
                     b.ToTable("categorias");
                 });
 
+            modelBuilder.Entity("computerChip.Models.Cotizacion", b =>
+                {
+                    b.Property<string>("id")
+                        .HasMaxLength(32)
+                        .HasColumnType("varchar(32)")
+                        .HasColumnName("id");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int")
+                        .HasColumnName("usuario_id");
+
+                    b.Property<string>("advertencias")
+                        .HasColumnType("text")
+                        .HasColumnName("advertencias");
+
+                    b.Property<string>("compradorEmail")
+                        .IsRequired()
+                        .HasMaxLength(254)
+                        .HasColumnType("varchar(254)")
+                        .HasColumnName("comprador_email");
+
+                    b.Property<string>("compradorNombre")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("varchar(150)")
+                        .HasColumnName("comprador_nombre");
+
+                    b.Property<string>("compradorTelefono")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("varchar(40)")
+                        .HasColumnName("comprador_telefono");
+
+                    b.Property<string>("entregaCiudad")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("entrega_ciudad");
+
+                    b.Property<string>("entregaCodigoPostal")
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)")
+                        .HasColumnName("entrega_codigo_postal");
+
+                    b.Property<string>("entregaDireccion")
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)")
+                        .HasColumnName("entrega_direccion");
+
+                    b.Property<string>("entregaProvincia")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("entrega_provincia");
+
+                    b.Property<string>("entregaTipo")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)")
+                        .HasColumnName("entrega_tipo");
+
+                    b.Property<decimal>("envio")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("envio");
+
+                    b.Property<DateTime>("fechaCreacion")
+                        .HasColumnType("datetime")
+                        .HasColumnName("fecha_creacion");
+
+                    b.Property<DateTime>("fechaVencimiento")
+                        .HasColumnType("datetime")
+                        .HasColumnName("fecha_vencimiento");
+
+                    b.Property<string>("observaciones")
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)")
+                        .HasColumnName("observaciones");
+
+                    b.Property<sbyte>("puedeConfirmar")
+                        .HasColumnType("tinyint")
+                        .HasColumnName("puede_confirmar");
+
+                    b.Property<decimal>("subtotal")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("subtotal");
+
+                    b.Property<decimal>("total")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("total");
+
+                    b.Property<sbyte>("utilizada")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint")
+                        .HasDefaultValue((sbyte)0)
+                        .HasColumnName("utilizada");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("UsuarioId")
+                        .HasDatabaseName("IX_Cotizaciones_UsuarioId");
+
+                    b.HasIndex("utilizada", "fechaVencimiento")
+                        .HasDatabaseName("IX_Cotizaciones_Utilizada_Vencimiento");
+
+                    b.ToTable("cotizaciones");
+                });
+
             modelBuilder.Entity("computerChip.Models.Especificaciones", b =>
                 {
                     b.Property<int>("id")
@@ -211,6 +316,50 @@ namespace computerChip.Migrations
                     b.HasKey("id");
 
                     b.ToTable("imagenes");
+                });
+
+            modelBuilder.Entity("computerChip.Models.ItemCotizacion", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<int>("Cantidad")
+                        .HasColumnType("int")
+                        .HasColumnName("cantidad");
+
+                    b.Property<string>("CotizacionId")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("varchar(32)")
+                        .HasColumnName("cotizacion_id");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("nombre");
+
+                    b.Property<decimal>("PrecioUnitario")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("precio_unitario");
+
+                    b.Property<int>("ProductoId")
+                        .HasColumnType("int")
+                        .HasColumnName("producto_id");
+
+                    b.Property<decimal>("Subtotal")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("subtotal");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("CotizacionId")
+                        .HasDatabaseName("IX_CotizacionesItems_CotizacionId");
+
+                    b.ToTable("cotizaciones_items");
                 });
 
             modelBuilder.Entity("computerChip.Models.ItemPedido", b =>
@@ -1053,10 +1202,8 @@ namespace computerChip.Migrations
                         .HasColumnType("varchar(45)")
                         .HasColumnName("codigopostal");
 
-                    b.Property<string>("costo")
-                        .IsRequired()
-                        .HasMaxLength(65)
-                        .HasColumnType("varchar(65)")
+                    b.Property<decimal>("costo")
+                        .HasColumnType("decimal(10,2)")
                         .HasColumnName("costo");
 
                     b.Property<string>("pais")
@@ -1085,6 +1232,28 @@ namespace computerChip.Migrations
                         .IsRequired();
 
                     b.Navigation("Usuarios");
+                });
+
+            modelBuilder.Entity("computerChip.Models.Cotizacion", b =>
+                {
+                    b.HasOne("computerChip.Models.Usuarios", "Usuario")
+                        .WithMany("Cotizaciones")
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("computerChip.Models.ItemCotizacion", b =>
+                {
+                    b.HasOne("computerChip.Models.Cotizacion", "Cotizacion")
+                        .WithMany("Items")
+                        .HasForeignKey("CotizacionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cotizacion");
                 });
 
             modelBuilder.Entity("computerChip.Models.ItemPedido", b =>
@@ -1377,6 +1546,11 @@ namespace computerChip.Migrations
                     b.Navigation("CategoriasProductos");
                 });
 
+            modelBuilder.Entity("computerChip.Models.Cotizacion", b =>
+                {
+                    b.Navigation("Items");
+                });
+
             modelBuilder.Entity("computerChip.Models.Especificaciones", b =>
                 {
                     b.Navigation("ProductosEspecificaciones");
@@ -1447,6 +1621,8 @@ namespace computerChip.Migrations
             modelBuilder.Entity("computerChip.Models.Usuarios", b =>
                 {
                     b.Navigation("Carrito");
+
+                    b.Navigation("Cotizaciones");
 
                     b.Navigation("LoginGoogle");
 

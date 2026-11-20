@@ -25,10 +25,9 @@ namespace computerChip.Models
         [Required]
         public string pais { get; set; } = string.Empty;
 
-        [Column("costo")]
-        [MaxLength(65)]
+        [Column("costo", TypeName = "decimal(10,2)")]
         [Required]
-        public string costo { get; set; } = string.Empty;
+        public decimal costo { get; set; }
 
         [Column("codigopostal")]
         [MaxLength(45)]

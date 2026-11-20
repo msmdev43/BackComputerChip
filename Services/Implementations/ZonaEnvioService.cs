@@ -71,7 +71,7 @@ namespace computerChip.Services.Implementations
         // OPERACIONES DE MODIFICACIÓN
         // ============================================
 
-        public async Task<ZonaEnvio> CreateZonaEnvioAsync(string ciudad, string provincia, string pais, string costo, string codigoPostal)
+        public async Task<ZonaEnvio> CreateZonaEnvioAsync(string ciudad, string provincia, string pais, decimal costo, string codigoPostal)
         {
             if (string.IsNullOrWhiteSpace(ciudad))
                 throw new ArgumentException("La ciudad no puede estar vacía");
@@ -100,7 +100,7 @@ namespace computerChip.Services.Implementations
             return zonaEnvio;
         }
 
-        public async Task<bool> UpdateZonaEnvioAsync(int id, string ciudad, string provincia, string pais, string costo, string codigoPostal)
+        public async Task<bool> UpdateZonaEnvioAsync(int id, string ciudad, string provincia, string pais, decimal costo, string codigoPostal)
         {
             try
             {
@@ -119,7 +119,7 @@ namespace computerChip.Services.Implementations
                 zonaEnvio.ciudad = ciudad ?? zonaEnvio.ciudad;
                 zonaEnvio.provincia = provincia ?? zonaEnvio.provincia;
                 zonaEnvio.pais = pais ?? zonaEnvio.pais;
-                zonaEnvio.costo = costo ?? zonaEnvio.costo;
+                zonaEnvio.costo = zonaEnvio.costo;
                 zonaEnvio.codigoPostal = codigoPostal ?? zonaEnvio.codigoPostal;
 
                 _zonaEnvioRepository.Update(zonaEnvio);
@@ -156,7 +156,7 @@ namespace computerChip.Services.Implementations
                 if (zonaEnvio == null)
                     return false;
 
-                zonaEnvio.costo = costo.ToString("F2");
+                zonaEnvio.costo = costo;
                 _zonaEnvioRepository.Update(zonaEnvio);
                 return await _zonaEnvioRepository.SaveChangesAsync();
             }

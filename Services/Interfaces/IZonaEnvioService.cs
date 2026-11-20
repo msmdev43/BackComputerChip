@@ -20,8 +20,8 @@ namespace computerChip.Services.Interfaces
         // ============================================
         // OPERACIONES DE MODIFICACIÓN
         // ============================================
-        Task<ZonaEnvio> CreateZonaEnvioAsync(string ciudad, string provincia, string pais, string costo, string codigoPostal);
-        Task<bool> UpdateZonaEnvioAsync(int id, string ciudad, string provincia, string pais, string costo, string codigoPostal);
+        Task<ZonaEnvio> CreateZonaEnvioAsync(string ciudad, string provincia, string pais, decimal costo, string codigoPostal);
+        Task<bool> UpdateZonaEnvioAsync(int id, string ciudad, string provincia, string pais, decimal costo, string codigoPostal);
         Task<bool> DeleteZonaEnvioAsync(int id);
         Task<bool> UpdateCostoEnvioAsync(int id, decimal costo);
     }

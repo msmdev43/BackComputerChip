@@ -62,5 +62,6 @@ namespace computerChip.Models
         public virtual ICollection<Pedidos> Pedidos { get; set; } = new List<Pedidos>();
         public virtual ICollection<PushToken> PushTokens { get; set; } = new List<PushToken>();
         public virtual ICollection<SantanderToken> SantanderTokens { get; set; } = new List<SantanderToken>();
+        public virtual ICollection<Cotizacion> Cotizaciones { get; set; } = new List<Cotizacion>();
     }
 }

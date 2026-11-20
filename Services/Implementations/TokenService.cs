@@ -142,34 +142,62 @@ namespace computerChip.Services.Implementations
             }
         }
 
-        // ============================================
-        // OPERACIONES AUXILIARES - JWT
-        // ============================================
-
         public async Task<string> GenerateAccessTokenAsync(int usuarioId)
         {
             var usuario = await _usuarioRepository.GetByIdAsync(usuarioId);
+
             if (usuario == null || usuario.deletedAt != null)
-                throw new InvalidOperationException("El usuario no existe o está desactivado");
+                throw new InvalidOperationException(
+                    "El usuario no existe o está desactivado"
+                );
 
-            var secretKey = _configuration["JWT:SecretKey"] ?? "tu-super-secret-key-minimo-32-caracteres";
-            var issuer = _configuration["JWT:Issuer"] ?? "ComputerChip";
-            var audience = _configuration["JWT:Audience"] ?? "ComputerChipUsers";
-            var expireMinutes = int.Parse(_configuration["JWT:ExpireMinutes"] ?? "60");
+            var jwtSettings = _configuration.GetSection("JwtSettings");
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"]));
-            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var secretKey = jwtSettings["SecretKey"]
+                ?? throw new InvalidOperationException(
+                    "JwtSettings:SecretKey no está configurado"
+                );
 
-            var claims = new[]
+            var issuer = jwtSettings["Issuer"]
+                ?? throw new InvalidOperationException(
+                    "JwtSettings:Issuer no está configurado"
+                );
+
+            var audience = jwtSettings["Audience"]
+                ?? throw new InvalidOperationException(
+                    "JwtSettings:Audience no está configurado"
+                );
+
+            if (!int.TryParse(jwtSettings["ExpiryInMinutes"], out var expireMinutes)
+                || expireMinutes <= 0)
             {
-                new Claim(ClaimTypes.NameIdentifier, usuarioId.ToString()),
+                throw new InvalidOperationException(
+                    "JwtSettings:ExpiryInMinutes no es válido"
+                );
+            }
+
+            var key = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(secretKey)
+            );
+
+            var credentials = new SigningCredentials(
+                key,
+                SecurityAlgorithms.HmacSha256
+            );
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, usuario.id.ToString()),
+                new Claim("usuarioId", usuario.id.ToString()),
                 new Claim(ClaimTypes.Email, usuario.email ?? string.Empty),
                 new Claim(ClaimTypes.Name, usuario.nombreCompleto ?? string.Empty),
-                new Claim("usuarioId", usuarioId.ToString()),
+                new Claim(ClaimTypes.Role, "Cliente"),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Iat,
-                    new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds().ToString(),
-                    ClaimValueTypes.Integer64)
+                new Claim(
+                    JwtRegisteredClaimNames.Iat,
+                    DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(),
+                    ClaimValueTypes.Integer64
+                )
             };
 
             var token = new JwtSecurityToken(
@@ -203,11 +231,20 @@ namespace computerChip.Services.Implementations
 
             try
             {
-                var secretKey = _configuration["JWT:SecretKey"] ?? "tu-super-secret-key-minimo-32-caracteres";
-                var issuer = _configuration["JWT:Issuer"] ?? "ComputerChip";
-                var audience = _configuration["JWT:Audience"] ?? "ComputerChipUsers";
+                var jwtSettings = _configuration.GetSection("JwtSettings");
 
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+                var secretKey = jwtSettings["SecretKey"]
+                    ?? throw new InvalidOperationException(
+                        "JwtSettings:SecretKey no está configurado"
+                    );
+
+                var issuer = jwtSettings["Issuer"];
+                var audience = jwtSettings["Audience"];
+
+                var key = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(secretKey)
+                );
+
                 var tokenHandler = new JwtSecurityTokenHandler();
 
                 var validationParameters = new TokenValidationParameters
@@ -219,10 +256,19 @@ namespace computerChip.Services.Implementations
                     ValidateAudience = true,
                     ValidAudience = audience,
                     ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero
+                    ClockSkew = TimeSpan.Zero,
+                    ValidAlgorithms = new[]
+                    {
+                SecurityAlgorithms.HmacSha256
+            }
                 };
 
-                tokenHandler.ValidateToken(token, validationParameters, out _);
+                tokenHandler.ValidateToken(
+                    token,
+                    validationParameters,
+                    out _
+                );
+
                 return await Task.FromResult(true);
             }
             catch
@@ -239,25 +285,53 @@ namespace computerChip.Services.Implementations
 
             try
             {
-                var secretKey = _configuration["JWT:SecretKey"] ?? "tu-super-secret-key-minimo-32-caracteres";
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+                var jwtSettings = _configuration.GetSection("JwtSettings");
+
+                var secretKey = jwtSettings["SecretKey"]
+                    ?? throw new InvalidOperationException(
+                        "JwtSettings:SecretKey no está configurado"
+                    );
+
+                var issuer = jwtSettings["Issuer"];
+                var audience = jwtSettings["Audience"];
+
+                var key = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(secretKey)
+                );
+
                 var tokenHandler = new JwtSecurityTokenHandler();
 
                 var validationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = key,
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
+                    ValidateIssuer = true,
+                    ValidIssuer = issuer,
+                    ValidateAudience = true,
+                    ValidAudience = audience,
                     ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero
+                    ClockSkew = TimeSpan.Zero,
+                    ValidAlgorithms = new[]
+                    {
+                SecurityAlgorithms.HmacSha256
+            }
                 };
 
-                var principal = tokenHandler.ValidateToken(token, validationParameters, out _);
-                var usuarioIdClaim = principal.FindFirst("usuarioId") ?? principal.FindFirst(ClaimTypes.NameIdentifier);
+                var principal = tokenHandler.ValidateToken(
+                    token,
+                    validationParameters,
+                    out _
+                );
 
-                if (usuarioIdClaim != null && int.TryParse(usuarioIdClaim.Value, out var usuarioId))
-                    return await Task.FromResult(usuarioId);
+                var usuarioIdClaim =
+                    principal.FindFirst(ClaimTypes.NameIdentifier)
+                    ?? principal.FindFirst("usuarioId");
+
+                if (usuarioIdClaim != null &&
+                    int.TryParse(usuarioIdClaim.Value, out var usuarioId))
+                {
+                    return usuarioId;
+                }
 
                 return null;
             }

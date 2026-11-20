@@ -52,7 +52,7 @@ namespace computerChip.Repositories.Implementations
             if (zona == null)
                 return 0;
 
-            return decimal.TryParse(zona.costo, out var costo) ? costo : 0;
+            return zona.costo;
         }
 
         public async Task<bool> ExistsByCodigoPostalAsync(string codigoPostal)
