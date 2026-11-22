@@ -119,7 +119,7 @@ namespace computerChip.Services.Implementations
                 zonaEnvio.ciudad = ciudad ?? zonaEnvio.ciudad;
                 zonaEnvio.provincia = provincia ?? zonaEnvio.provincia;
                 zonaEnvio.pais = pais ?? zonaEnvio.pais;
-                zonaEnvio.costo = zonaEnvio.costo;
+                zonaEnvio.costo = costo;
                 zonaEnvio.codigoPostal = codigoPostal ?? zonaEnvio.codigoPostal;
 
                 _zonaEnvioRepository.Update(zonaEnvio);
