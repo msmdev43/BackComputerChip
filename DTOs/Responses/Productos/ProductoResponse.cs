@@ -46,13 +46,6 @@
         public string nombre { get; set; }
     }
 
-    public class ProductoImagenResponse
-    {
-        public int id { get; set; }
-        public string nombre { get; set; }
-        public string url { get; set; }
-    }
-
     public class ProductoMiniResponse
     {
         public int Id { get; set; }

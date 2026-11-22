@@ -109,9 +109,7 @@ namespace computerChip.Mappings
                 // Imágenes → List<string> (solo URLs, ordenadas)
                 .ForMember(d => d.Imagenes,
                     o => o.MapFrom(s => s.ProductosImagenes
-                        .OrderBy(pi => pi.orden)
-                        .Select(pi => pi.Imagenes.url)
-                        .ToList()))
+                        .OrderBy(pi => pi.orden)))
                 // Especificaciones → List<ProductoEspecificacionResponse>
                 .ForMember(d => d.Especificaciones,
                     o => o.MapFrom(s => s.ProductosEspecificaciones.Select(pe => pe.Especificaciones)))
@@ -140,10 +138,11 @@ namespace computerChip.Mappings
                 .ForMember(d => d.nombre, o => o.MapFrom(s => s.nombre));
 
             // Imagen → ProductoImagenResponse (por si lo usás en otro DTO)
-            CreateMap<Imagenes, ProductoImagenResponse>()
-                .ForMember(d => d.id, o => o.MapFrom(s => s.id))
-                .ForMember(d => d.nombre, o => o.MapFrom(s => s.nombre))
-                .ForMember(d => d.url, o => o.MapFrom(s => s.url));
+            CreateMap<ProductosImagenes, ProductoImagenResponse>()
+                .ForMember(d => d.Id, o => o.MapFrom(s => s.Imagenes.id))
+                .ForMember(d => d.Nombre, o => o.MapFrom(s => s.Imagenes.nombre))
+                .ForMember(d => d.Url, o => o.MapFrom(s => s.Imagenes.url))
+                .ForMember(d => d.Orden, o => o.MapFrom(s => s.orden));
 
             // Especificación → ProductoEspecificacionResponse
             CreateMap<Especificaciones, ProductoEspecificacionResponse>()

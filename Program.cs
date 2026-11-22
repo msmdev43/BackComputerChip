@@ -180,6 +180,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IPushTokenService, PushTokenService>();
 
 builder.Services.AddScoped<IProductoService, ProductoService>();
+builder.Services.AddScoped<IProductoImagenesService, ProductoImagenesService>();
 builder.Services.AddScoped<IAtributoService, AtributoService>();
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 builder.Services.AddScoped<IMarcaService, MarcaService>();
@@ -232,6 +233,7 @@ if (app.Environment.WebRootPath == null)
 
 // 🔥 Forwarded headers ANTES de todo
 app.UseForwardedHeaders();
+app.UseStaticFiles();
 
 // Swagger solo en dev
 if (app.Environment.IsDevelopment())
