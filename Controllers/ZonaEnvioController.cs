@@ -1,10 +1,11 @@
-﻿using AutoMapper;
+using AutoMapper;
 using computerChip.DTOs.Requests.ZonaEnvio;
 using computerChip.DTOs.Responses.ZonaEnvio;
 using computerChip.Models;
 using computerChip.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
+using Microsoft.AspNetCore.Authorization;
 namespace computerChip.Controllers
 {
     [ApiController]
@@ -94,6 +95,7 @@ namespace computerChip.Controllers
         // ============================================
         // POST: api/zonaenvio
         // ============================================
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ZonaEnvioCreateRequest request)
         {
@@ -125,6 +127,7 @@ namespace computerChip.Controllers
         // ============================================
         // PUT: api/zonaenvio/{id}
         // ============================================
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] ZonaEnvioUpdateRequest request)
         {
@@ -148,6 +151,7 @@ namespace computerChip.Controllers
         // ============================================
         // DELETE: api/zonaenvio/{id}
         // ============================================
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -161,6 +165,7 @@ namespace computerChip.Controllers
         // ============================================
         // PATCH: api/zonaenvio/{id}/costo
         // ============================================
+        [Authorize(Roles = "Admin")]
         [HttpPatch("{id}/costo")]
         public async Task<IActionResult> UpdateCosto(int id, [FromBody] decimal costo)
         {

@@ -1,10 +1,11 @@
-﻿using AutoMapper;
+using AutoMapper;
 using computerChip.DTOs.Requests.Marcas;
 using computerChip.DTOs.Responses.Marcas;
 using computerChip.Models;
 using computerChip.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
+using Microsoft.AspNetCore.Authorization;
 namespace computerChip.Controllers
 {
     [ApiController]
@@ -79,6 +80,7 @@ namespace computerChip.Controllers
         // ============================================
         // POST: api/marca
         // ============================================
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] MarcaCreateRequest request)
         {
@@ -104,6 +106,7 @@ namespace computerChip.Controllers
         // ============================================
         // PUT: api/marca/{id}
         // ============================================
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] MarcaUpdateRequest request)
         {
@@ -120,6 +123,7 @@ namespace computerChip.Controllers
         // ============================================
         // DELETE: api/marca/{id}
         // ============================================
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -133,6 +137,7 @@ namespace computerChip.Controllers
         // ============================================
         // PATCH: api/marca/{id}/restore
         // ============================================
+        [Authorize(Roles = "Admin")]
         [HttpPatch("{id}/restore")]
         public async Task<IActionResult> Restore(int id)
         {
@@ -146,6 +151,7 @@ namespace computerChip.Controllers
         // ============================================
         // DELETE: api/marca/{id}/permanente
         // ============================================
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}/permanente")]
         public async Task<IActionResult> DeletePermanently(int id)
         {

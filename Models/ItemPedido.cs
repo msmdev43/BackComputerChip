@@ -1,4 +1,5 @@
-﻿using computerChip.Models.TablasIntermedias;
+﻿
+using computerChip.Models.TablasIntermedias;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -14,14 +15,22 @@ namespace computerChip.Models
         [Column("cantProducto")]
         public int cantidad { get; set; }
 
-        [Column("subtotal")]
+        [Column("subtotal", TypeName = "decimal(10,2)")]
         public decimal subtotal { get; set; }
 
-        // ============================================
-        // RELACIONES
-        // ============================================
-        public virtual ICollection<PedidosItemPedido> PedidosItemPedido { get; set; } = new List<PedidosItemPedido>();
+        // Snapshot histórico del producto
+        [Column("nombre_producto")]
+        [MaxLength(255)]
+        public string nombreProducto { get; set; } = string.Empty;
 
-        public virtual ICollection<ItemPedidoProductos> ItemPedidoProductos { get; set; } = new List<ItemPedidoProductos>();
+        [Column("precio_unitario", TypeName = "decimal(10,2)")]
+        public decimal precioUnitario { get; set; }
+
+        // Relaciones
+        public virtual ICollection<PedidosItemPedido> PedidosItemPedido { get; set; }
+            = new List<PedidosItemPedido>();
+
+        public virtual ICollection<ItemPedidoProductos> ItemPedidoProductos { get; set; }
+            = new List<ItemPedidoProductos>();
     }
 }

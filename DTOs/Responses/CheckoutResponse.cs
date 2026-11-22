@@ -23,6 +23,15 @@ namespace computerChip.DTOs.Responses
         public List<string> Advertencias { get; set; } = new();
     }
 
+    public class CheckoutPedidoResponse
+    {
+        public int Id { get; set; }
+        public string Numero { get; set; } = string.Empty;
+        public string EstadoPedido { get; set; } = string.Empty;
+        public string EstadoPago { get; set; } = string.Empty;
+        public string Mensaje { get; set; } = string.Empty;
+    }
+
     // ============================================
     // PRODUCTOS COTIZADOS
     // ============================================

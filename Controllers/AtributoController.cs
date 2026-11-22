@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using computerChip.DTOs.Requests.Atributo;
 using computerChip.DTOs.Responses.Atributo;
 using computerChip.DTOs.Responses.Productos;
@@ -76,6 +76,7 @@ namespace computerChip.Controllers
         // ============================================
         // POST: api/atributo
         // ============================================
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         
         public async Task<IActionResult> Create([FromBody] AtributoCreateRequest request)
@@ -95,6 +96,7 @@ namespace computerChip.Controllers
         // ============================================
         // PUT: api/atributo/{id}
         // ============================================
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         
         public async Task<IActionResult> Update(int id, [FromBody] AtributoUpdateRequest request)
@@ -115,6 +117,7 @@ namespace computerChip.Controllers
         // DELETE: api/atributo/{id}
         // ⚠️ Falla si el atributo tiene productos asociados (409 Conflict)
         // ============================================
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         
         public async Task<IActionResult> Delete(int id)
@@ -138,6 +141,7 @@ namespace computerChip.Controllers
         // ============================================
 
         // POST: api/atributo/producto/{productoId}
+        [Authorize(Roles = "Admin")]
         [HttpPost("producto/{productoId}")]
         
         public async Task<IActionResult> AsignarAProducto(int productoId, [FromBody] AsignarAtributosRequest request)
@@ -163,6 +167,7 @@ namespace computerChip.Controllers
         }
 
         // PUT: api/atributo/producto/{productoId}/{atributoId}
+        [Authorize(Roles = "Admin")]
         [HttpPut("producto/{productoId}/{atributoId}")]
         
         public async Task<IActionResult> ActualizarValor(int productoId, int atributoId, [FromBody] string valor)
@@ -177,6 +182,7 @@ namespace computerChip.Controllers
         }
 
         // DELETE: api/atributo/producto/{productoId}/{atributoId}
+        [Authorize(Roles = "Admin")]
         [HttpDelete("producto/{productoId}/{atributoId}")]
         
         public async Task<IActionResult> QuitarDeProducto(int productoId, int atributoId)

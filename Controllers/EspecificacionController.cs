@@ -1,10 +1,11 @@
-﻿using AutoMapper;
+using AutoMapper;
 using computerChip.DTOs.Requests.Especificacion;
 using computerChip.DTOs.Responses.Especificacion;
 using computerChip.Models;
 using computerChip.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
+using Microsoft.AspNetCore.Authorization;
 namespace computerChip.Controllers
 {
     [ApiController]
@@ -76,6 +77,7 @@ namespace computerChip.Controllers
         // ============================================
         // POST: api/especificacion
         // ============================================
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] EspecificacionCreateRequest request)
         {
@@ -104,6 +106,7 @@ namespace computerChip.Controllers
         // ============================================
         // PUT: api/especificacion/{id}
         // ============================================
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] EspecificacionUpdateRequest request)
         {
@@ -124,6 +127,7 @@ namespace computerChip.Controllers
         // ============================================
         // DELETE: api/especificacion/{id}
         // ============================================
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -137,6 +141,7 @@ namespace computerChip.Controllers
         // ============================================
         // POST: api/especificacion/asignar
         // ============================================
+        [Authorize(Roles = "Admin")]
         [HttpPost("asignar")]
         public async Task<IActionResult> AddToProduct([FromQuery] int especificacionId, [FromQuery] int productoId)
         {
@@ -150,6 +155,7 @@ namespace computerChip.Controllers
         // ============================================
         // DELETE: api/especificacion/asignar
         // ============================================
+        [Authorize(Roles = "Admin")]
         [HttpDelete("asignar")]
         public async Task<IActionResult> RemoveFromProduct([FromQuery] int especificacionId, [FromQuery] int productoId)
         {

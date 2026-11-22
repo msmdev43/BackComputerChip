@@ -1,7 +1,8 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using AutoMapper;
 using computerChip.DTOs.Responses.Usuario;
 using computerChip.Services.Interfaces;
+using computerChip.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,6 +28,7 @@ namespace computerChip.Controllers
         // Listar todos los usuarios activos
         // ⚠️ Ruta explícita "getAll" para que coincida con el front
         // ============================================
+        [Authorize(Roles = "Admin")]
         [HttpGet("getAll")]
         
         public async Task<IActionResult> GetAll()
@@ -39,10 +41,14 @@ namespace computerChip.Controllers
         // ============================================
         // GET: api/usuario/{id}
         // ============================================
+        [Authorize]
         [HttpGet("{id}")]
         
         public async Task<IActionResult> GetUsuarioById(int id)
         {
+            if (!User.IsInRole("Admin") && User.GetUserId() != id)
+                return Forbid();
+
             var usuario = await _usuarioService.GetByIdAsync(id);
             if (usuario == null)
                 return NotFound(new { Error = "Usuario no encontrado" });
@@ -77,6 +83,7 @@ namespace computerChip.Controllers
         // ============================================
         // GET: api/usuario/buscar?q=term
         // ============================================
+        [Authorize(Roles = "Admin")]
         [HttpGet("buscar")]
         
         public async Task<IActionResult> Buscar([FromQuery] string q)
@@ -92,6 +99,7 @@ namespace computerChip.Controllers
         // ============================================
         // GET: api/usuario/recientes?days=7
         // ============================================
+        [Authorize(Roles = "Admin")]
         [HttpGet("recientes")]
         
         public async Task<IActionResult> GetRecientes([FromQuery] int days = 7)
@@ -105,6 +113,7 @@ namespace computerChip.Controllers
         // ============================================
         // GET: api/usuario/stats
         // ============================================
+        [Authorize(Roles = "Admin")]
         [HttpGet("stats")]
         
         public async Task<IActionResult> GetStats()
@@ -123,6 +132,7 @@ namespace computerChip.Controllers
         // DELETE: api/usuario/{id}
         // Soft delete
         // ============================================
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         
         public async Task<IActionResult> Delete(int id)

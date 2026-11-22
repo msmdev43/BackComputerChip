@@ -158,6 +158,10 @@ namespace computerChip.Migrations
                         .HasColumnType("int")
                         .HasColumnName("usuario_id");
 
+                    b.Property<int?>("ZonaEnvioId")
+                        .HasColumnType("int")
+                        .HasColumnName("zona_envio_id");
+
                     b.Property<string>("advertencias")
                         .HasColumnType("text")
                         .HasColumnName("advertencias");
@@ -245,6 +249,8 @@ namespace computerChip.Migrations
 
                     b.HasIndex("UsuarioId")
                         .HasDatabaseName("IX_Cotizaciones_UsuarioId");
+
+                    b.HasIndex("ZonaEnvioId");
 
                     b.HasIndex("utilizada", "fechaVencimiento")
                         .HasDatabaseName("IX_Cotizaciones_Utilizada_Vencimiento");
@@ -376,6 +382,16 @@ namespace computerChip.Migrations
                     b.Property<int>("cantidad")
                         .HasColumnType("int")
                         .HasColumnName("cantProducto");
+
+                    b.Property<string>("nombreProducto")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("nombre_producto");
+
+                    b.Property<decimal>("precioUnitario")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("precio_unitario");
 
                     b.Property<decimal>("subtotal")
                         .HasColumnType("decimal(10,2)")
@@ -607,13 +623,28 @@ namespace computerChip.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<int>("MetodoPagoId")
+                    b.Property<string>("CotizacionId")
+                        .HasMaxLength(32)
+                        .HasColumnType("varchar(32)")
+                        .HasColumnName("cotizacion_id");
+
+                    b.Property<string>("IdempotencyKey")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("idempotency_key");
+
+                    b.Property<int?>("MetodoPagoId")
                         .HasColumnType("int")
                         .HasColumnName("metodos_pago_idmetodos_pago");
 
                     b.Property<int?>("OfertaId")
                         .HasColumnType("int")
                         .HasColumnName("ofertas_idofertas");
+
+                    b.Property<string>("RequestHash")
+                        .HasMaxLength(64)
+                        .HasColumnType("varchar(64)")
+                        .HasColumnName("request_hash");
 
                     b.Property<int>("UsuarioId")
                         .HasColumnType("int")
@@ -623,11 +654,63 @@ namespace computerChip.Migrations
                         .HasColumnType("int")
                         .HasColumnName("zona_envio_idenvio");
 
+                    b.Property<string>("compradorEmail")
+                        .IsRequired()
+                        .HasMaxLength(254)
+                        .HasColumnType("varchar(254)")
+                        .HasColumnName("comprador_email");
+
+                    b.Property<string>("compradorNombre")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("varchar(150)")
+                        .HasColumnName("comprador_nombre");
+
+                    b.Property<string>("compradorTelefono")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("varchar(40)")
+                        .HasColumnName("comprador_telefono");
+
                     b.Property<DateTime>("createdAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
                         .HasColumnName("createdAt")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("entregaCiudad")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("entrega_ciudad");
+
+                    b.Property<string>("entregaCodigoPostal")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)")
+                        .HasColumnName("entrega_codigo_postal");
+
+                    b.Property<string>("entregaDireccion")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)")
+                        .HasColumnName("entrega_direccion");
+
+                    b.Property<string>("entregaProvincia")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("entrega_provincia");
+
+                    b.Property<string>("entregaTipo")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)")
+                        .HasColumnName("entrega_tipo");
+
+                    b.Property<decimal>("envio")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("envio");
 
                     b.Property<string>("estado")
                         .IsRequired()
@@ -635,6 +718,23 @@ namespace computerChip.Migrations
                         .HasColumnType("enum('PENDIENTE','CONFIRMADO','ENVIADO','ENTREGADO','CANCELADO')")
                         .HasDefaultValue("PENDIENTE")
                         .HasColumnName("estado");
+
+                    b.Property<string>("estadoPago")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)")
+                        .HasDefaultValue("NO_SOLICITADO")
+                        .HasColumnName("estado_pago");
+
+                    b.Property<string>("observaciones")
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)")
+                        .HasColumnName("observaciones");
+
+                    b.Property<decimal>("subtotal")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("subtotal");
 
                     b.Property<decimal>("total")
                         .HasColumnType("decimal(10,2)")
@@ -649,6 +749,14 @@ namespace computerChip.Migrations
                     MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("updatedAt"));
 
                     b.HasKey("id");
+
+                    b.HasIndex("CotizacionId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Pedidos_CotizacionId");
+
+                    b.HasIndex("IdempotencyKey")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Pedidos_IdempotencyKey");
 
                     b.HasIndex("MetodoPagoId");
 
@@ -1242,7 +1350,14 @@ namespace computerChip.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("computerChip.Models.ZonaEnvio", "ZonaEnvio")
+                        .WithMany()
+                        .HasForeignKey("ZonaEnvioId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.Navigation("Usuario");
+
+                    b.Navigation("ZonaEnvio");
                 });
 
             modelBuilder.Entity("computerChip.Models.ItemCotizacion", b =>
@@ -1276,11 +1391,15 @@ namespace computerChip.Migrations
 
             modelBuilder.Entity("computerChip.Models.Pedidos", b =>
                 {
+                    b.HasOne("computerChip.Models.Cotizacion", "Cotizacion")
+                        .WithMany()
+                        .HasForeignKey("CotizacionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("computerChip.Models.MetodoPago", "MetodoPago")
                         .WithMany("Pedidos")
                         .HasForeignKey("MetodoPagoId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("computerChip.Models.Ofertas", "Ofertas")
                         .WithMany("Pedidos")
@@ -1298,6 +1417,8 @@ namespace computerChip.Migrations
                         .HasForeignKey("ZonaEnvioId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Cotizacion");
 
                     b.Navigation("MetodoPago");
 
@@ -1385,7 +1506,7 @@ namespace computerChip.Migrations
                     b.HasOne("computerChip.Models.Productos", "Productos")
                         .WithMany("ItemsPedidoProductos")
                         .HasForeignKey("productoId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("ItemPedido");

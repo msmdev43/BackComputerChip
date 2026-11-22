@@ -190,6 +190,8 @@ builder.Services.AddScoped<IItemPedidoService, ItemPedidoService>();
 builder.Services.AddScoped<IPedidoService, PedidoService>();
 builder.Services.AddScoped<IZonaEnvioService, ZonaEnvioService>();
 builder.Services.AddScoped<IOfertaService, OfertaService>();
+builder.Services.AddScoped<ICotizacionService, CotizacionService>();
+builder.Services.AddScoped<ICheckoutPedidoService, CheckoutPedidoService>();
 
 // ============================================
 // FILE SERVICE

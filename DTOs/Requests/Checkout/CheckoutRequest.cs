@@ -1,8 +1,7 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace computerChip.DTOs.Requests
+namespace computerChip.DTOs.Requests.Checkout
 {
     // ============================================
     // CHECKOUT - COTIZACIÓN
@@ -63,8 +62,8 @@ namespace computerChip.DTOs.Requests
     {
         [Required]
         [RegularExpression(
-            "^(envio|retiro)$",
-            ErrorMessage = "El tipo de entrega debe ser envio o retiro."
+            "^envio$",
+            ErrorMessage = "Por el momento solo está disponible el envío a domicilio."
         )]
         public string Tipo { get; set; } = string.Empty;
 

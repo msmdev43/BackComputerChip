@@ -108,9 +108,11 @@ namespace computerChip.Models
         [Column("utilizada")]
         public bool utilizada { get; set; }
 
-        // ============================================
-        // RELACIONES
-        // ============================================
+        [Column("zona_envio_id")]
+        public int? ZonaEnvioId { get; set; }
+
+        [ForeignKey(nameof(ZonaEnvioId))]
+        public virtual ZonaEnvio? ZonaEnvio { get; set; }
 
         public virtual ICollection<ItemCotizacion> Items { get; set; }
             = new List<ItemCotizacion>();

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using computerChip.DTOs.Requests.Productos;
 using computerChip.DTOs.Responses.Productos;
 using computerChip.Models;
@@ -162,6 +162,7 @@ namespace computerChip.Controllers
         }
 
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<ProductoResponse>> Create([FromBody] ProductoCreateRequest request)
         {
@@ -180,6 +181,7 @@ namespace computerChip.Controllers
             return CreatedAtAction(nameof(GetById), new { id = created.id }, response);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] ProductoUpdateRequest request)
         {
@@ -201,6 +203,7 @@ namespace computerChip.Controllers
         }
 
 
+        [Authorize(Roles = "Admin")]
         [HttpPatch("{id}/stock")]
         public async Task<IActionResult> UpdateStock(int id, [FromBody] bool stock)
         {
@@ -211,6 +214,7 @@ namespace computerChip.Controllers
             return Ok(new { id, stock, mensaje = "Stock actualizado correctamente" });
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> SoftDelete(int id)
         {
@@ -221,6 +225,7 @@ namespace computerChip.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("{id}/restaurar")]
         public async Task<IActionResult> Restore(int id)
         {
@@ -231,6 +236,7 @@ namespace computerChip.Controllers
             return Ok(new { mensaje = "Producto restaurado correctamente" });
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("{id}/categorias")]
         public async Task<IActionResult> AddCategories(int id, [FromBody] List<int> categoriaIds)
         {
@@ -244,6 +250,7 @@ namespace computerChip.Controllers
             return Ok(new { mensaje = "Categorías agregadas correctamente" });
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}/categorias")]
         public async Task<IActionResult> RemoveCategories(int id, [FromBody] List<int> categoriaIds)
         {
@@ -258,6 +265,7 @@ namespace computerChip.Controllers
         }
 
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("{id}/marcas")]
         public async Task<IActionResult> AddBrands(int id, [FromBody] List<int> marcaIds)
         {
@@ -271,6 +279,7 @@ namespace computerChip.Controllers
             return Ok(new { mensaje = "Marcas agregadas correctamente" });
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}/marcas")]
         public async Task<IActionResult> RemoveBrands(int id, [FromBody] List<int> marcaIds)
         {

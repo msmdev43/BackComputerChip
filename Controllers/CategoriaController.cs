@@ -1,10 +1,11 @@
-﻿using AutoMapper;
+using AutoMapper;
 using computerChip.DTOs.Requests.Categoria;
 using computerChip.DTOs.Responses.Categoria;
 using computerChip.Models;
 using computerChip.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
+using Microsoft.AspNetCore.Authorization;
 namespace computerChip.Controllers
 {
     [ApiController]
@@ -79,6 +80,7 @@ namespace computerChip.Controllers
         // ============================================
         // POST: api/categoria
         // ============================================
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CategoriaCreateRequest request)
         {
@@ -100,6 +102,7 @@ namespace computerChip.Controllers
         // ============================================
         // PUT: api/categoria/{id}
         // ============================================
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] CategoriaUpdateRequest request)
         {
@@ -116,6 +119,7 @@ namespace computerChip.Controllers
         // ============================================
         // DELETE: api/categoria/{id}
         // ============================================
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -129,6 +133,7 @@ namespace computerChip.Controllers
         // ============================================
         // PATCH: api/categoria/{id}/restore
         // ============================================
+        [Authorize(Roles = "Admin")]
         [HttpPatch("{id}/restore")]
         public async Task<IActionResult> Restore(int id)
         {
@@ -142,6 +147,7 @@ namespace computerChip.Controllers
         // ============================================
         // DELETE: api/categoria/{id}/permanente
         // ============================================
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}/permanente")]
         public async Task<IActionResult> DeletePermanently(int id)
         {

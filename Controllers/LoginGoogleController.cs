@@ -1,14 +1,16 @@
-﻿using AutoMapper;
+using AutoMapper;
 using computerChip.DTOs.Requests.Usuario;
 using computerChip.DTOs.Responses.Auth;
 using computerChip.DTOs.Responses.Usuario;
 using computerChip.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace computerChip.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "Admin")]
     public class LoginGoogleController : ControllerBase
     {
         private readonly ILoginGoogleService _loginGoogleService;

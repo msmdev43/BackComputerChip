@@ -455,10 +455,90 @@ namespace computerChip.Data
                     .HasColumnType("int")
                     .UseMySqlIdentityColumn();
 
+                // Se conserva el enum existente: PENDIENTE, CONFIRMADO,
+                // ENVIADO, ENTREGADO y CANCELADO.
                 entity.Property(e => e.estado)
                     .HasConversion<string>()
                     .HasColumnType("enum('PENDIENTE','CONFIRMADO','ENVIADO','ENTREGADO','CANCELADO')")
                     .HasDefaultValue(EstadoPedido.PENDIENTE);
+
+                entity.Property(e => e.CotizacionId)
+                    .HasColumnType("varchar(32)")
+                    .HasMaxLength(32)
+                    .IsRequired(false);
+
+                entity.Property(e => e.IdempotencyKey)
+                    .HasColumnType("varchar(100)")
+                    .HasMaxLength(100)
+                    .IsRequired(false);
+
+                entity.Property(e => e.RequestHash)
+                    .HasColumnType("varchar(64)")
+                    .HasMaxLength(64)
+                    .IsRequired(false);
+
+                entity.Property(e => e.MetodoPagoId)
+                    .HasColumnType("int")
+                    .IsRequired(false);
+
+                entity.Property(e => e.estadoPago)
+                    .HasColumnType("varchar(30)")
+                    .HasMaxLength(30)
+                    .HasDefaultValue("NO_SOLICITADO")
+                    .IsRequired();
+
+                entity.Property(e => e.compradorNombre)
+                    .HasColumnType("varchar(150)")
+                    .HasMaxLength(150)
+                    .IsRequired();
+
+                entity.Property(e => e.compradorEmail)
+                    .HasColumnType("varchar(254)")
+                    .HasMaxLength(254)
+                    .IsRequired();
+
+                entity.Property(e => e.compradorTelefono)
+                    .HasColumnType("varchar(40)")
+                    .HasMaxLength(40)
+                    .IsRequired();
+
+                entity.Property(e => e.entregaTipo)
+                    .HasColumnType("varchar(20)")
+                    .HasMaxLength(20)
+                    .IsRequired();
+
+                entity.Property(e => e.entregaProvincia)
+                    .HasColumnType("varchar(100)")
+                    .HasMaxLength(100)
+                    .IsRequired();
+
+                entity.Property(e => e.entregaCiudad)
+                    .HasColumnType("varchar(100)")
+                    .HasMaxLength(100)
+                    .IsRequired();
+
+                entity.Property(e => e.entregaCodigoPostal)
+                    .HasColumnType("varchar(20)")
+                    .HasMaxLength(20)
+                    .IsRequired();
+
+                entity.Property(e => e.entregaDireccion)
+                    .HasColumnType("varchar(200)")
+                    .HasMaxLength(200)
+                    .IsRequired();
+
+                entity.Property(e => e.observaciones)
+                    .HasColumnType("varchar(1000)")
+                    .HasMaxLength(1000)
+                    .IsRequired(false);
+
+                entity.Property(e => e.subtotal)
+                    .HasColumnType("decimal(10,2)")
+                    .IsRequired();
+
+                entity.Property(e => e.envio)
+                    .HasColumnType("decimal(10,2)")
+                    .IsRequired();
 
                 entity.Property(e => e.total)
                     .HasColumnType("decimal(10,2)")
@@ -473,7 +553,28 @@ namespace computerChip.Data
                     .HasDefaultValueSql("CURRENT_TIMESTAMP")
                     .ValueGeneratedOnAddOrUpdate();
 
+                // Claves de idempotencia: nullable para preservar pedidos
+                // históricos creados antes de implementar el nuevo checkout.
+                entity.HasIndex(e => e.IdempotencyKey)
+                    .IsUnique()
+                    .HasDatabaseName("IX_Pedidos_IdempotencyKey");
+
+                entity.HasIndex(e => e.CotizacionId)
+                    .IsUnique()
+                    .HasDatabaseName("IX_Pedidos_CotizacionId");
+
                 // RELACIONES
+                entity.HasOne(e => e.Cotizacion)
+                    .WithMany()
+                    .HasForeignKey(e => e.CotizacionId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.MetodoPago)
+                    .WithMany(e => e.Pedidos)
+                    .HasForeignKey(e => e.MetodoPagoId)
+                    .IsRequired(false)
+                    .OnDelete(DeleteBehavior.Restrict);
+
                 entity.HasMany(e => e.PedidosItemPedido)
                     .WithOne(e => e.Pedidos)
                     .HasForeignKey(e => e.pedidosId)
@@ -493,6 +594,15 @@ namespace computerChip.Data
                     .IsRequired();
 
                 entity.Property(e => e.subtotal)
+                    .HasColumnType("decimal(10,2)")
+                    .IsRequired();
+
+                entity.Property(e => e.nombreProducto)
+                    .HasColumnType("varchar(255)")
+                    .HasMaxLength(255)
+                    .IsRequired();
+
+                entity.Property(e => e.precioUnitario)
                     .HasColumnType("decimal(10,2)")
                     .IsRequired();
 
@@ -891,6 +1001,10 @@ namespace computerChip.Data
                     .HasColumnType("int")
                     .IsRequired();
 
+                entity.Property(e => e.ZonaEnvioId)
+                    .HasColumnType("int")
+                    .IsRequired(false);
+
                 entity.Property(e => e.compradorNombre)
                     .HasColumnType("varchar(150)")
                     .HasMaxLength(150)
@@ -974,6 +1088,14 @@ namespace computerChip.Data
 
                 entity.HasIndex(e => new { e.utilizada, e.fechaVencimiento })
                     .HasDatabaseName("IX_Cotizaciones_Utilizada_Vencimiento");
+
+                // Relación opcional con la zona de envío. Una cotización
+                // sin cobertura puede no tener una zona asociada.
+                entity.HasOne(e => e.ZonaEnvio)
+                    .WithMany()
+                    .HasForeignKey(e => e.ZonaEnvioId)
+                    .IsRequired(false)
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 // Relación con los detalles
                 entity.HasMany(e => e.Items)
@@ -1169,7 +1291,7 @@ namespace computerChip.Data
                 entity.HasOne(e => e.Productos)
                     .WithMany(e => e.ItemsPedidoProductos)
                     .HasForeignKey(e => e.productoId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }
